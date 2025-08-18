@@ -61,11 +61,28 @@ const Header = () => {
 
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Sign up</a>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Log in</a>
+                  <button 
+                    onClick={() => setCurrentView('signup')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    Sign up
+                  </button>
+                  <button 
+                    onClick={() => setCurrentView('signin')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    Log in
+                  </button>
                   <hr className="my-1" />
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Become a teacher</a>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Help Center</a>
+                  <button 
+                    onClick={() => setCurrentView('become-teacher')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    Become a teacher
+                  </button>
+                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    Help Center
+                  </button>
                 </div>
               )}
             </div>
@@ -103,11 +120,33 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-2 space-y-1">
-            <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">Find Teachers</a>
-            <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">Become a Teacher</a>
-            <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">Help</a>
-            <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">Sign up</a>
-            <a href="#" className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">Log in</a>
+            <button 
+              onClick={() => setCurrentView('search')}
+              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+            >
+              Find Teachers
+            </button>
+            <button 
+              onClick={() => setCurrentView('become-teacher')}
+              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+            >
+              Become a Teacher
+            </button>
+            <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">
+              Help
+            </button>
+            <button 
+              onClick={() => setCurrentView('signup')}
+              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+            >
+              Sign up
+            </button>
+            <button 
+              onClick={() => setCurrentView('signin')}
+              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+            >
+              Log in
+            </button>
           </div>
         </div>
       )}

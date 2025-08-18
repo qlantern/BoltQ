@@ -4,10 +4,13 @@ import Hero from './components/Hero';
 import TeacherCard from './components/TeacherCard';
 import SearchResults from './components/SearchResults';
 import TeacherProfile from './components/TeacherProfile';
+import SignUpPage from './components/SignUpPage';
+import SignInPage from './components/SignInPage';
+import BecomeTeacherPage from './components/BecomeTeacherPage';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 
-type AppView = 'home' | 'search' | 'profile';
+type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
@@ -45,10 +48,28 @@ function App() {
     setSelectedTeacher(null);
   };
 
+  const handleNavigate = (view: string) => {
+    setCurrentView(view as AppView);
+    setSelectedTeacher(null);
+  };
+
+  // Auth pages
+  if (currentView === 'signup') {
+    return <SignUpPage onNavigate={handleNavigate} />;
+  }
+
+  if (currentView === 'signin') {
+    return <SignInPage onNavigate={handleNavigate} />;
+  }
+
+  if (currentView === 'become-teacher') {
+    return <BecomeTeacherPage onNavigate={handleNavigate} />;
+  }
+
   if (currentView === 'profile' && selectedTeacher) {
     return (
       <div>
-        <Header />
+        <Header onNavigate={handleNavigate} />
         <TeacherProfile teacher={selectedTeacher} onBack={handleBackToSearch} />
       </div>
     );
@@ -57,7 +78,7 @@ function App() {
   if (currentView === 'search') {
     return (
       <div>
-        <Header />
+        <Header onNavigate={handleNavigate} />
         <SearchResults 
           teachers={mockTeachers}
           onTeacherSelect={handleTeacherSelect}
@@ -68,7 +89,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header onNavigate={handleNavigate} />
       
       {/* Hero Section */}
       <div onClick={handleSearchTeachers} className="cursor-pointer">
@@ -173,7 +194,10 @@ function App() {
             >
               Find a Teacher
             </button>
-            <button className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-coral-500 font-semibold transition-colors duration-200">
+            <button 
+              onClick={() => setCurrentView('become-teacher')}
+              className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-coral-500 font-semibold transition-colors duration-200"
+            >
               Become a Teacher
             </button>
           </div>
@@ -202,7 +226,14 @@ function App() {
             <div>
               <h4 className="font-semibold mb-4">For Teachers</h4>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Become a Teacher</a></li>
+                <li>
+                  <button 
+                    onClick={() => setCurrentView('become-teacher')}
+                    className="hover:text-white text-left"
+                  >
+                    Become a Teacher
+                  </button>
+                </li>
                 <li><a href="#" className="hover:text-white">Teacher Resources</a></li>
                 <li><a href="#" className="hover:text-white">Community</a></li>
                 <li><a href="#" className="hover:text-white">Support</a></li>
