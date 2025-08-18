@@ -4,9 +4,9 @@ import Hero from './components/Hero';
 import TeacherCard from './components/TeacherCard';
 import SearchResults from './components/SearchResults';
 import TeacherProfile from './components/TeacherProfile';
-import SignUpPage from './components/SignUpPage.tsx';
-import SignInPage from './components/SignInPage.tsx';
-import BecomeTeacherPage from './components/BecomeTeacherPage.tsx';
+import SignUpPage from './components/SignUpPage';
+import SignInPage from './components/SignInPage';
+import BecomeTeacherPage from './components/BecomeTeacherPage';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 
