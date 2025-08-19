@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Star, MapPin, Globe, Clock, CheckCircle, Calendar, MessageCircle, Heart, ArrowLeft, Play } from 'lucide-react';
 import { Teacher, Review } from '../types';
 import { mockReviews } from '../data/mockData';
+import BookingModal from './BookingModal';
 
 interface TeacherProfileProps {
   teacher: Teacher;
@@ -11,6 +12,7 @@ interface TeacherProfileProps {
 const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
   const [selectedTab, setSelectedTab] = useState('about');
   const [isFavorited, setIsFavorited] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   return (
     <div className="bg-white min-h-screen">
@@ -71,7 +73,10 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Message
                   </button>
-                  <button className="bg-coral-500 text-white px-6 py-2 rounded-lg hover:bg-coral-600 flex items-center">
+                  <button 
+                    onClick={() => setIsBookingModalOpen(true)}
+                    className="bg-coral-500 text-white px-6 py-2 rounded-lg hover:bg-coral-600 flex items-center"
+                  >
                     <Calendar className="h-4 w-4 mr-2" />
                     Book Lesson
                   </button>
@@ -338,10 +343,41 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                 <Clock className="h-4 w-4 inline mr-1" />
                 Usually responds {teacher.responseTime}
               </div>
+
+              <div className="space-y-4 mb-6">
+                <button 
+                  onClick={() => setIsBookingModalOpen(true)}
+                  className="w-full bg-coral-500 text-white py-3 px-4 rounded-lg hover:bg-coral-600 font-semibold flex items-center justify-center"
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Book Lesson
+                </button>
+                {teacher.offersOnlineClasses && teacher.offersOfflineClasses && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button className="bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 text-sm font-medium">
+                      Online Class
+                    </button>
+                    <button className="bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 text-sm font-medium">
+                      Offline Class
+                    </button>
+                  </div>
+                )}
+                <button className="w-full bg-teal-500 text-white py-3 px-4 rounded-lg hover:bg-teal-600 font-semibold flex items-center justify-center">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Send Message
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <BookingModal
+        teacher={teacher}
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+      />
     </div>
   );
 };
