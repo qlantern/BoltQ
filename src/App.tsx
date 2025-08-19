@@ -89,7 +89,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header onNavigate={handleNavigate} />
+      <Header onNavigate={setCurrentView} />
       
       {/* Hero Section */}
       <div onClick={handleSearchTeachers} className="cursor-pointer">

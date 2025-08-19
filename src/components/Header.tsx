@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Search, Menu, User, MessageCircle, Heart, Globe } from 'lucide-react';
 
-const Header = () => {
+interface HeaderProps {
+  onNavigate: (view: string) => void;
+}
+
+const Header = ({ onNavigate }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
@@ -62,20 +66,20 @@ const Header = () => {
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                   <button 
-                    onClick={() => setCurrentView('signup')}
+                    onClick={() => onNavigate('signup')}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Sign up
                   </button>
                   <button 
-                    onClick={() => setCurrentView('signin')}
+                    onClick={() => onNavigate('signin')}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Log in
                   </button>
                   <hr className="my-1" />
                   <button 
-                    onClick={() => setCurrentView('become-teacher')}
+                    onClick={() => onNavigate('become-teacher')}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     Become a teacher
@@ -121,13 +125,13 @@ const Header = () => {
         <div className="md:hidden border-t border-gray-200 bg-white">
           <div className="px-4 py-2 space-y-1">
             <button 
-              onClick={() => setCurrentView('search')}
+              onClick={() => onNavigate('search')}
               className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
             >
               Find Teachers
             </button>
             <button 
-              onClick={() => setCurrentView('become-teacher')}
+              onClick={() => onNavigate('become-teacher')}
               className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
             >
               Become a Teacher
@@ -136,13 +140,13 @@ const Header = () => {
               Help
             </button>
             <button 
-              onClick={() => setCurrentView('signup')}
+              onClick={() => onNavigate('signup')}
               className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
             >
               Sign up
             </button>
             <button 
-              onClick={() => setCurrentView('signin')}
+              onClick={() => onNavigate('signin')}
               className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
             >
               Log in
