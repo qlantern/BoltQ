@@ -167,7 +167,6 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
         onClose={() => setIsBookingModalOpen(false)}
       />
     </>
-    </div>
   );
 };
 
