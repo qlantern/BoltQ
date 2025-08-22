@@ -2,6 +2,7 @@ import React from 'react';
 import { Star, MapPin, Clock, CheckCircle, Heart } from 'lucide-react';
 import { Teacher } from '../types';
 import BookingModal from './BookingModal';
+import { useMessaging } from '../hooks/useMessaging';
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -12,6 +13,11 @@ interface TeacherCardProps {
 
 const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavorited = false, onBookingClick }) => {
   const [isBookingModalOpen, setIsBookingModalOpen] = React.useState(false);
+  
+  // Mock current user ID - in real app this would come from auth context
+  const currentUserId = 'user-2';
+  
+  const { startConversation } = useMessaging(currentUserId);
 
   const handleBookingClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -22,17 +28,39 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
     }
   };
 
+  const handleMessageClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await startConversation(
+        teacher.id,
+        teacher.name,
+        teacher.avatar,
+        'teacher'
+      );
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+    }
+  };
+
   return (
     <>
       <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer relative">
         {/* Booking Overlay on Hover */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
-          <button
-            onClick={handleBookingClick}
-            className="bg-coral-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-coral-600 transform scale-95 group-hover:scale-100 transition-transform duration-200"
-          >
-            Book Lesson
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={handleMessageClick}
+              className="bg-teal-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-teal-600 transform scale-95 group-hover:scale-100 transition-transform duration-200"
+            >
+              Message
+            </button>
+            <button
+              onClick={handleBookingClick}
+              className="bg-coral-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-coral-600 transform scale-95 group-hover:scale-100 transition-transform duration-200"
+            >
+              Book Lesson
+            </button>
+          </div>
         </div>
 
         <div className="relative">

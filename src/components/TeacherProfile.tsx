@@ -3,6 +3,8 @@ import { Star, MapPin, Globe, Clock, CheckCircle, Calendar, MessageCircle, Heart
 import { Teacher, Review } from '../types';
 import { mockReviews } from '../data/mockData';
 import BookingModal from './BookingModal';
+import { useMessaging } from '../hooks/useMessaging';
+import MessageCenter from './messaging/MessageCenter';
 
 interface TeacherProfileProps {
   teacher: Teacher;
@@ -13,6 +15,30 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
   const [selectedTab, setSelectedTab] = useState('about');
   const [isFavorited, setIsFavorited] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isMessageCenterOpen, setIsMessageCenterOpen] = useState(false);
+  const [selectedConversationId, setSelectedConversationId] = useState<string>();
+  
+  // Mock current user ID - in real app this would come from auth context
+  const currentUserId = 'user-2';
+  
+  const { startConversation } = useMessaging(currentUserId);
+
+  const handleMessageTeacher = async () => {
+    try {
+      const conversation = await startConversation(
+        teacher.id,
+        teacher.name,
+        teacher.avatar,
+        'teacher'
+      );
+      setSelectedConversationId(conversation.id);
+      setIsMessageCenterOpen(true);
+    } catch (error) {
+      console.error('Failed to start conversation:', error);
+      // Fallback: just open message center
+      setIsMessageCenterOpen(true);
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen">
@@ -69,7 +95,10 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                   >
                     <Heart className={`h-5 w-5 ${isFavorited ? 'fill-coral-500 text-coral-500' : 'text-gray-600'}`} />
                   </button>
-                  <button className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 flex items-center">
+                  <button 
+                    onClick={handleMessageTeacher}
+                    className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 flex items-center"
+                  >
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Message
                   </button>
@@ -377,6 +406,14 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
         teacher={teacher}
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
+      />
+
+      {/* Message Center */}
+      <MessageCenter
+        isOpen={isMessageCenterOpen}
+        onClose={() => setIsMessageCenterOpen(false)}
+        currentUserId={currentUserId}
+        initialConversationId={selectedConversationId}
       />
     </div>
   );

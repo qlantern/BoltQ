@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { Search, Menu, User, MessageCircle, Heart, Globe } from 'lucide-react';
+import { Search, Menu, User, MessageCircle, Heart, Globe, Bell } from 'lucide-react';
+import { useMessaging } from '../hooks/useMessaging';
+import MessageCenter from './messaging/MessageCenter';
+import MessageNotifications from './messaging/MessageNotifications';
 
 interface HeaderProps {
   onNavigate: (view: string) => void;
@@ -8,6 +11,16 @@ interface HeaderProps {
 const Header = ({ onNavigate }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMessageCenterOpen, setIsMessageCenterOpen] = useState(false);
+  
+  // Mock current user ID - in real app this would come from auth context
+  const currentUserId = 'user-2';
+  
+  const { 
+    unreadCount, 
+    notifications, 
+    dismissNotification 
+  } = useMessaging(currentUserId);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -43,8 +56,20 @@ const Header = ({ onNavigate }: HeaderProps) => {
               EN
             </button>
 
-            <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
+            <button 
+              onClick={() => setIsMessageCenterOpen(true)}
+              className="relative text-gray-700 hover:text-coral-500 transition-colors duration-200"
+            >
               <MessageCircle className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
+              <Bell className="h-5 w-5" />
             </button>
 
             <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
@@ -154,6 +179,22 @@ const Header = ({ onNavigate }: HeaderProps) => {
           </div>
         </div>
       )}
+
+      {/* Message Center */}
+      <MessageCenter
+        isOpen={isMessageCenterOpen}
+        onClose={() => setIsMessageCenterOpen(false)}
+        currentUserId={currentUserId}
+      />
+
+      {/* Message Notifications */}
+      <MessageNotifications
+        notifications={notifications}
+        onNotificationClick={(conversationId) => {
+          setIsMessageCenterOpen(true);
+        }}
+        onNotificationDismiss={dismissNotification}
+      />
     </header>
   );
 };
