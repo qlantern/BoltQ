@@ -8,15 +8,19 @@ import TeacherProfile from './components/TeacherProfile';
 import SignUpPage from './components/SignUpPage';
 import SignInPage from './components/SignInPage';
 import BecomeTeacherPage from './components/BecomeTeacherPage';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminDashboard from './components/admin/AdminDashboard';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
+import { adminService } from './services/adminService';
 
-type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher';
+type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [favoritedTeachers, setFavoritedTeachers] = useState<Set<string>>(new Set());
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const handleFavorite = (teacherId: string) => {
     setFavoritedTeachers(prev => {
@@ -54,6 +58,17 @@ function App() {
     setSelectedTeacher(null);
   };
 
+  const handleAdminLogin = () => {
+    setIsAdminAuthenticated(true);
+    setCurrentView('admin-dashboard');
+  };
+
+  const handleAdminLogout = async () => {
+    await adminService.logout();
+    setIsAdminAuthenticated(false);
+    setCurrentView('home');
+  };
+
   return (
     <AuthProvider>
       {/* Auth pages */}
@@ -67,6 +82,15 @@ function App() {
 
       {currentView === 'become-teacher' && (
         <BecomeTeacherPage onNavigate={handleNavigate} />
+      )}
+
+      {/* Admin pages */}
+      {currentView === 'admin-login' && (
+        <AdminLogin onLogin={handleAdminLogin} onNavigate={handleNavigate} />
+      )}
+
+      {currentView === 'admin-dashboard' && (
+        <AdminDashboard onNavigate={handleNavigate} />
       )}
 
       {currentView === 'profile' && selectedTeacher && (
@@ -243,6 +267,14 @@ function App() {
                   <ul className="space-y-2 text-gray-400">
                     <li><a href="#" className="hover:text-white">Help Center</a></li>
                     <li><a href="#" className="hover:text-white">Contact Us</a></li>
+                    <li>
+                      <button 
+                        onClick={() => setCurrentView('admin-login')}
+                        className="hover:text-white text-left"
+                      >
+                        Admin Login
+                      </button>
+                    </li>
                     <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
                     <li><a href="#" className="hover:text-white">Terms of Service</a></li>
                   </ul>
