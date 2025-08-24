@@ -13,7 +13,7 @@ class AuthService {
   private readonly SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
   constructor() {
-    this.initializeMockUsers();
+    this.initializeMockUsers().catch(console.error);
     this.loadUserFromStorage();
   }
 
@@ -42,7 +42,7 @@ class AuthService {
     }
   }
 
-  private initializeMockUsers() {
+  private async initializeMockUsers() {
     // Mock users for testing
     const mockUsers = [
       {
@@ -69,8 +69,8 @@ class AuthService {
       }
     ];
 
-    mockUsers.forEach(user => {
-      const { hash, salt } = hashPassword('password123');
+    for (const user of mockUsers) {
+      const { hash, salt } = await hashPassword('password123');
       const storedUser: StoredUser = {
         ...user,
         passwordHash: hash,
@@ -78,7 +78,7 @@ class AuthService {
         sessions: []
       };
       this.users.set(user.email, storedUser);
-    });
+    }
   }
 
   private loadUserFromStorage() {
@@ -155,7 +155,7 @@ class AuthService {
     }
 
     // Hash password
-    const { hash, salt } = hashPassword(data.password);
+    const { hash, salt } = await hashPassword(data.password);
 
     // Create new user
     const userWithoutSensitive: User = {
@@ -243,7 +243,7 @@ class AuthService {
       };
     }
 
-    if (!verifyPassword(data.password, storedUser.passwordHash, storedUser.passwordSalt)) {
+    if (!(await verifyPassword(data.password, storedUser.passwordHash, storedUser.passwordSalt))) {
       this.recordFailedAttempt(data.email);
       return {
         user: null,
@@ -394,7 +394,7 @@ class AuthService {
     }
 
     const storedUser = this.users.get(this.currentUser.email);
-    if (!storedUser || !verifyPassword(currentPassword, storedUser.passwordHash, storedUser.passwordSalt)) {
+    if (!storedUser || !(await verifyPassword(currentPassword, storedUser.passwordHash, storedUser.passwordSalt))) {
       return {
         success: false,
         error: {
@@ -405,7 +405,7 @@ class AuthService {
     }
 
     // Update password
-    const { hash, salt } = hashPassword(newPassword);
+    const { hash, salt } = await hashPassword(newPassword);
     storedUser.passwordHash = hash;
     storedUser.passwordSalt = salt;
     storedUser.updatedAt = new Date();
