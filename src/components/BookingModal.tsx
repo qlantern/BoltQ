@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { X, Calendar, Clock, DollarSign, User, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Teacher } from '../types';
+import BookingConfirmation from './BookingConfirmation';
 
 interface BookingModalProps {
   teacher: Teacher;
   isOpen: boolean;
   onClose: () => void;
+  onBackToHome?: () => void;
 }
 
 interface BookingData {
@@ -17,8 +19,9 @@ interface BookingData {
   specialRequests: string;
 }
 
-const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose }) => {
+const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, onBackToHome }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData>({
     classType: '',
     date: '',
@@ -77,10 +80,25 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose })
   };
 
   const handleBookingSubmit = () => {
-    // Simulate booking submission
-    alert('Booking request sent! The teacher will respond within 24 hours.');
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmationClose = () => {
+    setShowConfirmation(false);
     onClose();
-    // Reset form
+    resetForm();
+  };
+
+  const handleBackToHomeFromConfirmation = () => {
+    setShowConfirmation(false);
+    onClose();
+    resetForm();
+    if (onBackToHome) {
+      onBackToHome();
+    }
+  };
+
+  const resetForm = () => {
     setCurrentStep(1);
     setBookingData({
       classType: '',
@@ -334,6 +352,24 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose })
   );
 
   if (!isOpen) return null;
+
+  if (showConfirmation) {
+    return (
+      <BookingConfirmation
+        teacher={teacher}
+        bookingDetails={{
+          classType: bookingData.classType as 'online' | 'offline',
+          date: bookingData.date,
+          time: bookingData.time,
+          duration: bookingData.duration,
+          focusArea: bookingData.focusArea,
+          totalPrice: calculatePrice()
+        }}
+        onClose={handleConfirmationClose}
+        onBackToHome={handleBackToHomeFromConfirmation}
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

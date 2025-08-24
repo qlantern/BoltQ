@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ChevronRight, ChevronLeft, Upload, X, Plus, Check, User, Mail, Phone, MapPin, DollarSign, BookOpen, Globe, Camera, FileText, Award, Youtube, Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import TeacherApplicationConfirmation from './TeacherApplicationConfirmation';
 
 interface BecomeTeacherPageProps {
   onNavigate: (view: string) => void;
@@ -47,6 +48,7 @@ interface TeacherApplicationData {
 const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [applicationData, setApplicationData] = useState<TeacherApplicationData>({
     firstName: '',
     lastName: '',
@@ -185,9 +187,13 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      alert('Application submitted successfully! We will review your application and get back to you within 2-3 business days.');
-      onNavigate('home');
+      setShowConfirmation(true);
     }, 3000);
+  };
+
+  const handleBackToHomeFromConfirmation = () => {
+    setShowConfirmation(false);
+    onNavigate('home');
   };
 
   const renderProgressBar = () => (
@@ -757,6 +763,22 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
       </div>
     </div>
   );
+
+  if (showConfirmation) {
+    return (
+      <TeacherApplicationConfirmation
+        applicationData={{
+          firstName: applicationData.firstName,
+          lastName: applicationData.lastName,
+          email: applicationData.email,
+          experience: applicationData.experience,
+          specialties: applicationData.specialties,
+          hourlyRate: applicationData.hourlyRate
+        }}
+        onBackToHome={handleBackToHomeFromConfirmation}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
