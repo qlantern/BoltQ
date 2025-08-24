@@ -40,6 +40,10 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
     }
   };
 
+  const handleBackToSearch = () => {
+    onBack();
+  };
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
@@ -406,6 +410,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
         teacher={teacher}
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
+        onBackToHome={handleBackToSearch}
       />
 
       {/* Message Center */}

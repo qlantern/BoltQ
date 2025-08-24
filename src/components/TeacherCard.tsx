@@ -194,6 +194,10 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
         teacher={teacher}
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
+        onBackToHome={() => {
+          setIsBookingModalOpen(false);
+          // Could navigate to home if needed
+        }}
       />
     </>
   );
