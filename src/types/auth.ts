@@ -14,6 +14,12 @@ export interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  session: Session | null;
+}
+
+export interface Session {
+  token: string;
+  expiresAt: Date;
 }
 
 export interface SignUpData {
@@ -33,4 +39,10 @@ export interface SignInData {
 export interface AuthError {
   code: string;
   message: string;
+}
+
+export interface StoredUser extends User {
+  passwordHash: string;
+  passwordSalt: string;
+  sessions: Session[];
 }

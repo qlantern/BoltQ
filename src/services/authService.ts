@@ -1,9 +1,16 @@
-import { User, SignUpData, SignInData, AuthError } from '../types/auth';
+import { User, SignUpData, SignInData, AuthError, Session, StoredUser } from '../types/auth';
+
+import { hashPassword, verifyPassword, generateToken } from '../utils/crypto';
 
 class AuthService {
-  private users: Map<string, User & { password: string }> = new Map();
+  private users: Map<string, StoredUser> = new Map();
   private currentUser: User | null = null;
+  private currentSession: Session | null = null;
   private eventListeners: Map<string, Function[]> = new Map();
+  private failedAttempts: Map<string, { count: number; lastAttempt: Date }> = new Map();
+  private readonly MAX_FAILED_ATTEMPTS = 5;
+  private readonly LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+  private readonly SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
   constructor() {
     this.initializeMockUsers();
@@ -41,7 +48,6 @@ class AuthService {
       {
         id: 'user-1',
         email: 'student@example.com',
-        password: 'password123',
         firstName: 'Ahmed',
         lastName: 'Hassan',
         avatar: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
@@ -53,7 +59,6 @@ class AuthService {
       {
         id: 'user-2',
         email: 'teacher@example.com',
-        password: 'password123',
         firstName: 'Sarah',
         lastName: 'Johnson',
         avatar: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
@@ -65,32 +70,48 @@ class AuthService {
     ];
 
     mockUsers.forEach(user => {
-      this.users.set(user.email, user);
+      const { hash, salt } = hashPassword('password123');
+      const storedUser: StoredUser = {
+        ...user,
+        passwordHash: hash,
+        passwordSalt: salt,
+        sessions: []
+      };
+      this.users.set(user.email, storedUser);
     });
   }
 
   private loadUserFromStorage() {
-    const storedUser = localStorage.getItem('teachbnb_user');
-    if (storedUser) {
+    const storedAuth = localStorage.getItem('teachbnb_auth');
+    if (storedAuth) {
       try {
-        const userData = JSON.parse(storedUser);
+        const { user, session } = JSON.parse(storedAuth);
         // Convert date strings back to Date objects
-        userData.createdAt = new Date(userData.createdAt);
-        userData.updatedAt = new Date(userData.updatedAt);
-        this.currentUser = userData;
+        user.createdAt = new Date(user.createdAt);
+        user.updatedAt = new Date(user.updatedAt);
+        session.expiresAt = new Date(session.expiresAt);
+        
+        // Check if session is expired
+        if (session.expiresAt <= new Date()) {
+          this.removeUserFromStorage();
+          return;
+        }
+
+        this.currentUser = user;
+        this.currentSession = session;
       } catch (error) {
         console.error('Failed to load user from storage:', error);
-        localStorage.removeItem('teachbnb_user');
+        this.removeUserFromStorage();
       }
     }
   }
 
-  private saveUserToStorage(user: User) {
-    localStorage.setItem('teachbnb_user', JSON.stringify(user));
+  private saveUserToStorage(user: User, session: Session) {
+    localStorage.setItem('teachbnb_auth', JSON.stringify({ user, session }));
   }
 
   private removeUserFromStorage() {
-    localStorage.removeItem('teachbnb_user');
+    localStorage.removeItem('teachbnb_auth');
   }
 
   // Simulate API delay
@@ -100,6 +121,27 @@ class AuthService {
 
   async signUp(data: SignUpData): Promise<{ user: User; error: null } | { user: null; error: AuthError }> {
     await this.delay(1500);
+
+    // Input validation
+    if (!this.isValidEmail(data.email)) {
+      return {
+        user: null,
+        error: {
+          code: 'invalid_email',
+          message: 'Please enter a valid email address'
+        }
+      };
+    }
+
+    if (!this.isValidPassword(data.password)) {
+      return {
+        user: null,
+        error: {
+          code: 'invalid_password',
+          message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+        }
+      };
+    }
 
     // Check if user already exists
     if (this.users.has(data.email)) {
@@ -112,11 +154,13 @@ class AuthService {
       };
     }
 
+    // Hash password
+    const { hash, salt } = hashPassword(data.password);
+
     // Create new user
-    const newUser: User & { password: string } = {
+    const userWithoutSensitive: User = {
       id: `user-${Date.now()}`,
       email: data.email,
-      password: data.password,
       firstName: data.firstName,
       lastName: data.lastName,
       avatar: `https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop`,
@@ -126,24 +170,70 @@ class AuthService {
       updatedAt: new Date()
     };
 
-    this.users.set(data.email, newUser);
+    // Create session
+    const session: Session = {
+      token: generateToken(),
+      expiresAt: new Date(Date.now() + this.SESSION_DURATION)
+    };
 
-    // Remove password from user object for client
-    const { password, ...userWithoutPassword } = newUser;
-    this.currentUser = userWithoutPassword;
-    this.saveUserToStorage(userWithoutPassword);
+    // Create stored user
+    const storedUser: StoredUser = {
+      ...userWithoutSensitive,
+      passwordHash: hash,
+      passwordSalt: salt,
+      sessions: [session]
+    };
 
-    this.emit('auth:signUp', userWithoutPassword);
-    this.emit('auth:stateChange', { user: userWithoutPassword, isAuthenticated: true });
+    this.users.set(data.email, storedUser);
+    this.currentUser = userWithoutSensitive;
+    this.currentSession = session;
+    this.saveUserToStorage(userWithoutSensitive, session);
 
-    return { user: userWithoutPassword, error: null };
+    this.emit('auth:signUp', userWithoutSensitive);
+    this.emit('auth:stateChange', { 
+      user: userWithoutSensitive, 
+      isAuthenticated: true,
+      session 
+    });
+
+    return { user: userWithoutSensitive, error: null };
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  private isValidPassword(password: string): boolean {
+    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
   }
 
   async signIn(data: SignInData): Promise<{ user: User; error: null } | { user: null; error: AuthError }> {
     await this.delay(1000);
 
-    const user = this.users.get(data.email);
-    if (!user || user.password !== data.password) {
+    // Check for rate limiting
+    const attempts = this.failedAttempts.get(data.email);
+    if (attempts) {
+      const timeSinceLastAttempt = Date.now() - attempts.lastAttempt.getTime();
+      if (attempts.count >= this.MAX_FAILED_ATTEMPTS && timeSinceLastAttempt < this.LOCKOUT_DURATION) {
+        return {
+          user: null,
+          error: {
+            code: 'account_locked',
+            message: `Too many failed attempts. Please try again in ${Math.ceil((this.LOCKOUT_DURATION - timeSinceLastAttempt) / 60000)} minutes.`
+          }
+        };
+      }
+      if (timeSinceLastAttempt >= this.LOCKOUT_DURATION) {
+        this.failedAttempts.delete(data.email);
+      }
+    }
+
+    const storedUser = this.users.get(data.email);
+    if (!storedUser) {
+      this.recordFailedAttempt(data.email);
       return {
         user: null,
         error: {
@@ -153,28 +243,79 @@ class AuthService {
       };
     }
 
-    // Remove password from user object for client
-    const { password, ...userWithoutPassword } = user;
-    this.currentUser = userWithoutPassword;
-    
-    if (data.rememberMe) {
-      this.saveUserToStorage(userWithoutPassword);
+    if (!verifyPassword(data.password, storedUser.passwordHash, storedUser.passwordSalt)) {
+      this.recordFailedAttempt(data.email);
+      return {
+        user: null,
+        error: {
+          code: 'invalid_credentials',
+          message: 'Invalid email or password'
+        }
+      };
     }
 
-    this.emit('auth:signIn', userWithoutPassword);
-    this.emit('auth:stateChange', { user: userWithoutPassword, isAuthenticated: true });
+    // Reset failed attempts on successful login
+    this.failedAttempts.delete(data.email);
 
-    return { user: userWithoutPassword, error: null };
+    // Create new session
+    const session: Session = {
+      token: generateToken(),
+      expiresAt: new Date(Date.now() + this.SESSION_DURATION)
+    };
+
+    // Store session
+    storedUser.sessions = storedUser.sessions.filter(s => s.expiresAt > new Date());
+    storedUser.sessions.push(session);
+    
+    const { passwordHash, passwordSalt, sessions, ...userWithoutSensitiveData } = storedUser;
+    this.currentUser = userWithoutSensitiveData;
+    this.currentSession = session;
+    
+    if (data.rememberMe) {
+      this.saveUserToStorage(userWithoutSensitiveData, session);
+    }
+
+    this.emit('auth:signIn', userWithoutSensitiveData);
+    this.emit('auth:stateChange', { 
+      user: userWithoutSensitiveData, 
+      isAuthenticated: true,
+      session
+    });
+
+    return { user: userWithoutSensitiveData, error: null };
+  }
+
+  private recordFailedAttempt(email: string) {
+    const attempts = this.failedAttempts.get(email) || { count: 0, lastAttempt: new Date() };
+    attempts.count += 1;
+    attempts.lastAttempt = new Date();
+    this.failedAttempts.set(email, attempts);
   }
 
   async signOut(): Promise<void> {
     await this.delay(500);
 
+    if (this.currentUser && this.currentSession) {
+      const storedUser = this.users.get(this.currentUser.email);
+      if (storedUser) {
+        // Remove current session
+        storedUser.sessions = storedUser.sessions.filter(
+          s => s.token !== this.currentSession?.token
+        );
+        this.users.set(this.currentUser.email, storedUser);
+      }
+    }
+
     this.currentUser = null;
+    this.currentSession = null;
     this.removeUserFromStorage();
 
     this.emit('auth:signOut', null);
-    this.emit('auth:stateChange', { user: null, isAuthenticated: false });
+    this.emit('auth:stateChange', { 
+      user: null, 
+      isAuthenticated: false,
+      session: null 
+    });
   }
 
   getCurrentUser(): User | null {
@@ -188,7 +329,7 @@ class AuthService {
   async updateProfile(updates: Partial<Pick<User, 'firstName' | 'lastName' | 'avatar'>>): Promise<{ user: User; error: null } | { user: null; error: AuthError }> {
     await this.delay(800);
 
-    if (!this.currentUser) {
+    if (!this.currentUser || !this.currentSession) {
       return {
         user: null,
         error: {
@@ -205,16 +346,25 @@ class AuthService {
     };
 
     // Update in storage
-    const userWithPassword = this.users.get(this.currentUser.email);
-    if (userWithPassword) {
-      this.users.set(this.currentUser.email, { ...userWithPassword, ...updates, updatedAt: new Date() });
+    const storedUser = this.users.get(this.currentUser.email);
+    if (storedUser) {
+      const updatedStoredUser: StoredUser = {
+        ...storedUser,
+        ...updates,
+        updatedAt: new Date()
+      };
+      this.users.set(this.currentUser.email, updatedStoredUser);
     }
 
     this.currentUser = updatedUser;
-    this.saveUserToStorage(updatedUser);
+    this.saveUserToStorage(updatedUser, this.currentSession);
 
     this.emit('auth:profileUpdate', updatedUser);
-    this.emit('auth:stateChange', { user: updatedUser, isAuthenticated: true });
+    this.emit('auth:stateChange', { 
+      user: updatedUser, 
+      isAuthenticated: true,
+      session: this.currentSession 
+    });
 
     return { user: updatedUser, error: null };
   }
@@ -232,8 +382,19 @@ class AuthService {
       };
     }
 
-    const userWithPassword = this.users.get(this.currentUser.email);
-    if (!userWithPassword || userWithPassword.password !== currentPassword) {
+    // Validate new password
+    if (!this.isValidPassword(newPassword)) {
+      return {
+        success: false,
+        error: {
+          code: 'invalid_password',
+          message: 'New password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+        }
+      };
+    }
+
+    const storedUser = this.users.get(this.currentUser.email);
+    if (!storedUser || !verifyPassword(currentPassword, storedUser.passwordHash, storedUser.passwordSalt)) {
       return {
         success: false,
         error: {
@@ -244,9 +405,11 @@ class AuthService {
     }
 
     // Update password
-    userWithPassword.password = newPassword;
-    userWithPassword.updatedAt = new Date();
-    this.users.set(this.currentUser.email, userWithPassword);
+    const { hash, salt } = hashPassword(newPassword);
+    storedUser.passwordHash = hash;
+    storedUser.passwordSalt = salt;
+    storedUser.updatedAt = new Date();
+    this.users.set(this.currentUser.email, storedUser);
 
     return { success: true, error: null };
   }
