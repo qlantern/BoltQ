@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Search, Menu, User, MessageCircle, Heart, Globe, Bell } from 'lucide-react';
+import { Search, Menu, MessageCircle, Heart, Globe, Bell } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { useMessaging } from '../hooks/useMessaging';
+import UserMenu from './UserMenu';
 import MessageCenter from './messaging/MessageCenter';
 import MessageNotifications from './messaging/MessageNotifications';
 
@@ -10,11 +12,12 @@ interface HeaderProps {
 
 const Header = ({ onNavigate }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMessageCenterOpen, setIsMessageCenterOpen] = useState(false);
   
+  const { user, isAuthenticated } = useAuth();
+  
   // Mock current user ID - in real app this would come from auth context
-  const currentUserId = 'user-2';
+  const currentUserId = user?.id || 'user-2';
   
   const { 
     unreadCount, 
@@ -76,45 +79,8 @@ const Header = ({ onNavigate }: HeaderProps) => {
               <Heart className="h-5 w-5" />
             </button>
 
-            {/* User Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 border border-gray-300 rounded-full px-3 py-2 hover:shadow-md transition-shadow duration-200"
-              >
-                <Menu className="h-4 w-4" />
-                <div className="bg-gray-400 rounded-full p-1">
-                  <User className="h-4 w-4 text-white" />
-                </div>
-              </button>
-
-              {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  <button 
-                    onClick={() => onNavigate('signup')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    Sign up
-                  </button>
-                  <button 
-                    onClick={() => onNavigate('signin')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    Log in
-                  </button>
-                  <hr className="my-1" />
-                  <button 
-                    onClick={() => onNavigate('become-teacher')}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    Become a teacher
-                  </button>
-                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                    Help Center
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* User Menu Component */}
+            <UserMenu onNavigate={onNavigate} />
           </div>
 
           {/* Mobile menu button */}
@@ -155,26 +121,30 @@ const Header = ({ onNavigate }: HeaderProps) => {
             >
               Find Teachers
             </button>
-            <button 
-              onClick={() => onNavigate('become-teacher')}
-              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
-            >
-              Become a Teacher
-            </button>
+            {!isAuthenticated && (
+              <>
+                <button 
+                  onClick={() => onNavigate('become-teacher')}
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+                >
+                  Become a Teacher
+                </button>
+                <button 
+                  onClick={() => onNavigate('signup')}
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+                >
+                  Sign up
+                </button>
+                <button 
+                  onClick={() => onNavigate('signin')}
+                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
+                >
+                  Log in
+                </button>
+              </>
+            )}
             <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">
               Help
-            </button>
-            <button 
-              onClick={() => onNavigate('signup')}
-              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
-            >
-              Sign up
-            </button>
-            <button 
-              onClick={() => onNavigate('signin')}
-              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
-            >
-              Log in
             </button>
           </div>
         </div>

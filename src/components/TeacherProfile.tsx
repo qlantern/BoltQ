@@ -3,6 +3,7 @@ import { Star, MapPin, Globe, Clock, CheckCircle, Calendar, MessageCircle, Heart
 import { Teacher, Review } from '../types';
 import { mockReviews } from '../data/mockData';
 import BookingModal from './BookingModal';
+import { useAuth } from '../contexts/AuthContext';
 import { useMessaging } from '../hooks/useMessaging';
 import MessageCenter from './messaging/MessageCenter';
 
@@ -18,8 +19,10 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
   const [isMessageCenterOpen, setIsMessageCenterOpen] = useState(false);
   const [selectedConversationId, setSelectedConversationId] = useState<string>();
   
-  // Mock current user ID - in real app this would come from auth context
-  const currentUserId = 'user-2';
+  const { user } = useAuth();
+  
+  // Use authenticated user ID or fallback to mock ID
+  const currentUserId = user?.id || 'user-2';
   
   const { startConversation } = useMessaging(currentUserId);
 

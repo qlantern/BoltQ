@@ -14,8 +14,10 @@ interface TeacherCardProps {
 const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavorited = false, onBookingClick }) => {
   const [isBookingModalOpen, setIsBookingModalOpen] = React.useState(false);
   
-  // Mock current user ID - in real app this would come from auth context
-  const currentUserId = 'user-2';
+  const { user } = useAuth();
+  
+  // Use authenticated user ID or fallback to mock ID
+  const currentUserId = user?.id || 'user-2';
   
   const { startConversation } = useMessaging(currentUserId);
 

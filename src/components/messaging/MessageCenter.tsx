@@ -23,6 +23,8 @@ const MessageCenter: React.FC<MessageCenterProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  const { user } = useAuth();
 
   useEffect(() => {
     if (isOpen) {
