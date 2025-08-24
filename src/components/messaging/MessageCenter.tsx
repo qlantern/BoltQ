@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, MessageCircle, Search, Phone, Video, MoreVertical } from 'lucide-react';
 import { Conversation, Message, MessageThread } from '../../types/messaging';
 import { messagingService } from '../../services/messagingService';
+import { useAuth } from '../../contexts/AuthContext';
 import ConversationList from './ConversationList';
 import ChatWindow from './ChatWindow';
 

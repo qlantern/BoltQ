@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, MapPin, Clock, CheckCircle, Heart } from 'lucide-react';
 import { Teacher } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 import BookingModal from './BookingModal';
 import { useMessaging } from '../hooks/useMessaging';
 
