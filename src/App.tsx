@@ -10,11 +10,12 @@ import SignInPage from './components/SignInPage';
 import BecomeTeacherPage from './components/BecomeTeacherPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
+import TeacherDashboard from './components/teacher/TeacherDashboard';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 import { adminService } from './services/adminService';
 
-type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard';
+type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard' | 'teacher-dashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<AppView>('home');
@@ -91,6 +92,10 @@ function App() {
 
       {currentView === 'admin-dashboard' && (
         <AdminDashboard onNavigate={handleNavigate} />
+      )}
+
+      {currentView === 'teacher-dashboard' && (
+        <TeacherDashboard />
       )}
 
       {currentView === 'profile' && selectedTeacher && (
@@ -258,6 +263,14 @@ function App() {
                       </button>
                     </li>
                     <li><a href="#" className="hover:text-white">Teacher Resources</a></li>
+                    <li>
+                      <button 
+                        onClick={() => setCurrentView('teacher-dashboard')}
+                        className="hover:text-white text-left"
+                      >
+                        Teacher Dashboard
+                      </button>
+                    </li>
                     <li><a href="#" className="hover:text-white">Community</a></li>
                     <li><a href="#" className="hover:text-white">Support</a></li>
                   </ul>
