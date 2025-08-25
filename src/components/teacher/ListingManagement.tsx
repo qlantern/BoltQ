@@ -18,6 +18,7 @@ import {
   Tag,
   Globe
 } from 'lucide-react';
+import ClassModal from './ClassModal';
 
 interface ClassListing {
   id: string;
@@ -49,6 +50,7 @@ interface ClassListing {
 
 const ListingManagement: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState<ClassListing | null>(null);
   const [filterType, setFilterType] = useState<'all' | 'active' | 'inactive'>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -160,6 +162,34 @@ const ListingManagement: React.FC = () => {
       createdAt: new Date()
     };
     setListings(prev => [newListing, ...prev]);
+  };
+
+  const handleEditListing = (listing: ClassListing) => {
+    setSelectedListing(listing);
+    setShowEditModal(true);
+  };
+
+  const handleSaveListing = (classData: any) => {
+    if (classData.id) {
+      // Update existing listing
+      setListings(prev => prev.map(listing => 
+        listing.id === classData.id ? { ...listing, ...classData } : listing
+      ));
+    } else {
+      // Create new listing
+      const newListing = {
+        ...classData,
+        id: Date.now().toString(),
+        isActive: true,
+        rating: 0,
+        totalBookings: 0,
+        createdAt: new Date()
+      };
+      setListings(prev => [newListing, ...prev]);
+    }
+    setShowCreateModal(false);
+    setShowEditModal(false);
+    setSelectedListing(null);
   };
 
   return (
@@ -389,7 +419,7 @@ const ListingManagement: React.FC = () => {
               <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => setSelectedListing(listing)}
+                    onClick={() => handleEditListing(listing)}
                     className="p-2 text-gray-600 hover:text-coral-500 hover:bg-coral-50 rounded-lg"
                     title="Edit"
                   >
@@ -452,6 +482,24 @@ const ListingManagement: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* Create Class Modal */}
+      <ClassModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSave={handleSaveListing}
+      />
+
+      {/* Edit Class Modal */}
+      <ClassModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedListing(null);
+        }}
+        onSave={handleSaveListing}
+        editingClass={selectedListing}
+      />
     </div>
   );
 };

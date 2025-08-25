@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { 
   Camera, 
-  Upload, 
   Edit3, 
   Save, 
   X, 
-  Eye, 
-  EyeOff,
   MapPin,
   Globe,
   Award,
@@ -14,13 +11,16 @@ import {
   Star,
   Users
 } from 'lucide-react';
+import PhotoUploadModal from './PhotoUploadModal';
 
 const ProfileManagement: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [showCoverUpload, setShowCoverUpload] = useState(false);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [photoUploadType, setPhotoUploadType] = useState<'profile' | 'cover'>('profile');
   const [profileData, setProfileData] = useState({
     firstName: 'Sarah',
     lastName: 'Johnson',
+    nickname: 'Sarah J.',
     bio: 'Passionate English teacher with 8+ years of experience helping students achieve their language goals. Specialized in business communication and exam preparation.',
     location: 'London, UK',
     languages: ['English (Native)', 'Spanish (Fluent)', 'French (Intermediate)'],
@@ -33,15 +33,6 @@ const ProfileManagement: React.FC = () => {
     ],
     certifications: ['CELTA', 'TESOL', 'Cambridge English Teaching Qualification'],
     profileVisibility: 'public'
-  });
-
-  const [privacySettings, setPrivacySettings] = useState({
-    showEmail: false,
-    showPhone: false,
-    showLocation: true,
-    showRating: true,
-    allowMessages: true,
-    showAvailability: true
   });
 
   const handleSave = () => {
@@ -58,8 +49,15 @@ const ProfileManagement: React.FC = () => {
     setProfileData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePrivacyChange = (setting: string, value: boolean) => {
-    setPrivacySettings(prev => ({ ...prev, [setting]: value }));
+  const handlePhotoUpload = (file: File) => {
+    // In a real app, this would upload to server
+    console.log('Uploading photo:', file.name);
+    setShowPhotoUpload(false);
+  };
+
+  const openPhotoUpload = (type: 'profile' | 'cover') => {
+    setPhotoUploadType(type);
+    setShowPhotoUpload(true);
   };
 
   return (
@@ -103,7 +101,7 @@ const ProfileManagement: React.FC = () => {
           <div className="absolute inset-0 bg-black bg-opacity-20"></div>
           {isEditing && (
             <button
-              onClick={() => setShowCoverUpload(true)}
+              onClick={() => openPhotoUpload('cover')}
               className="absolute top-4 right-4 bg-white bg-opacity-90 hover:bg-white text-gray-700 p-2 rounded-lg transition-colors"
             >
               <Camera className="h-4 w-4" />
@@ -125,7 +123,7 @@ const ProfileManagement: React.FC = () => {
                 className="w-32 h-32 rounded-full border-4 border-white object-cover"
               />
               {isEditing && (
-                <button className="absolute bottom-2 right-2 bg-coral-500 text-white p-2 rounded-full hover:bg-coral-600">
+                <button onClick={() => openPhotoUpload('profile')} className="absolute bottom-2 right-2 bg-coral-500 text-white p-2 rounded-full hover:bg-coral-600">
                   <Camera className="h-4 w-4" />
                 </button>
               )}
@@ -134,6 +132,9 @@ const ProfileManagement: React.FC = () => {
               <div className="flex items-center space-x-4 mb-2">
                 <h1 className="text-2xl font-bold text-gray-900">
                   {profileData.firstName} {profileData.lastName}
+                  {profileData.nickname && (
+                    <span className="text-lg text-gray-600 ml-2">({profileData.nickname})</span>
+                  )}
                 </h1>
                 <div className="flex items-center space-x-1">
                   <Star className="h-4 w-4 text-yellow-400 fill-current" />
@@ -156,9 +157,9 @@ const ProfileManagement: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Main Profile Information */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
           {/* Basic Information */}
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
@@ -177,6 +178,20 @@ const ProfileManagement: React.FC = () => {
                 )}
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nickname</label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={profileData.nickname}
+                    onChange={(e) => handleInputChange('nickname', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                    placeholder="Optional display name"
+                  />
+                ) : (
+                  <p className="text-gray-900">{profileData.nickname || 'Not set'}</p>
+                )}
+              </div>
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                 {isEditing ? (
                   <input
@@ -306,119 +321,23 @@ const ProfileManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Privacy Settings Sidebar */}
-        <div className="space-y-6">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Privacy Settings</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Show email to students</span>
-                <button
-                  onClick={() => handlePrivacyChange('showEmail', !privacySettings.showEmail)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    privacySettings.showEmail ? 'bg-coral-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      privacySettings.showEmail ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Show phone number</span>
-                <button
-                  onClick={() => handlePrivacyChange('showPhone', !privacySettings.showPhone)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    privacySettings.showPhone ? 'bg-coral-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      privacySettings.showPhone ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Show location</span>
-                <button
-                  onClick={() => handlePrivacyChange('showLocation', !privacySettings.showLocation)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    privacySettings.showLocation ? 'bg-coral-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      privacySettings.showLocation ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Show rating & reviews</span>
-                <button
-                  onClick={() => handlePrivacyChange('showRating', !privacySettings.showRating)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    privacySettings.showRating ? 'bg-coral-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      privacySettings.showRating ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Allow messages</span>
-                <button
-                  onClick={() => handlePrivacyChange('allowMessages', !privacySettings.allowMessages)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    privacySettings.allowMessages ? 'bg-coral-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      privacySettings.allowMessages ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-700">Show availability</span>
-                <button
-                  onClick={() => handlePrivacyChange('showAvailability', !privacySettings.showAvailability)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    privacySettings.showAvailability ? 'bg-coral-500' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      privacySettings.showAvailability ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Profile Preview */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Preview</h3>
-            <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-              <Eye className="h-4 w-4 mr-2" />
-              View as Student
-            </button>
-          </div>
+        {/* Footer Message */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-sm text-yellow-800">
+            <strong>Note:</strong> For additions, deletion, or editing of personal or professional information, 
+            please send an email to <a href="mailto:teacherbnb@gmail.com" className="text-yellow-900 underline">teacherbnb@gmail.com</a>
+          </p>
         </div>
       </div>
+
+      {/* Photo Upload Modal */}
+      <PhotoUploadModal
+        isOpen={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        onUpload={handlePhotoUpload}
+        type={photoUploadType}
+        title={photoUploadType === 'profile' ? 'Upload Profile Photo' : 'Upload Cover Photo'}
+      />
     </div>
   );
 };

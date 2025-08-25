@@ -20,6 +20,7 @@ import MessagesSection from './MessagesSection';
 import SchedulingSystem from './SchedulingSystem';
 import ListingManagement from './ListingManagement';
 import DashboardOverview from './DashboardOverview';
+import SettingsSection from './SettingsSection';
 
 type DashboardTab = 'overview' | 'profile' | 'messages' | 'schedule' | 'listings' | 'settings';
 
@@ -49,7 +50,7 @@ const TeacherDashboard: React.FC = () => {
       case 'listings':
         return <ListingManagement />;
       case 'settings':
-        return <div className="p-6">Settings content coming soon...</div>;
+        return <SettingsSection />;
       default:
         return <DashboardOverview />;
     }

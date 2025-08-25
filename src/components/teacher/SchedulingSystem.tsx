@@ -11,7 +11,9 @@ import {
   Edit3,
   Trash2,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Check,
+  X
 } from 'lucide-react';
 
 interface TimeSlot {
@@ -24,7 +26,7 @@ interface TimeSlot {
   };
   subject: string;
   type: 'online' | 'offline';
-  status: 'confirmed' | 'pending' | 'cancelled';
+  status: 'pending' | 'approved' | 'upcoming' | 'finished' | 'available';
   location?: string;
   meetingLink?: string;
 }
@@ -39,6 +41,7 @@ const SchedulingSystem: React.FC = () => {
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
   const [showNewEventModal, setShowNewEventModal] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
+  const [availability, setAvailability] = useState<Map<string, boolean>>(new Map());
 
   // Mock schedule data
   const schedule: DaySchedule[] = [
@@ -55,7 +58,7 @@ const SchedulingSystem: React.FC = () => {
           },
           subject: 'Business English',
           type: 'online',
-          status: 'confirmed',
+          status: 'approved',
           meetingLink: 'https://zoom.us/j/123456789'
         },
         {
@@ -68,7 +71,7 @@ const SchedulingSystem: React.FC = () => {
           },
           subject: 'IELTS Preparation',
           type: 'online',
-          status: 'confirmed',
+          status: 'upcoming',
           meetingLink: 'https://meet.google.com/abc-defg-hij'
         },
         {
@@ -99,7 +102,7 @@ const SchedulingSystem: React.FC = () => {
           },
           subject: 'Grammar Fundamentals',
           type: 'online',
-          status: 'confirmed',
+          status: 'finished',
           meetingLink: 'https://zoom.us/j/987654321'
         }
       ]
@@ -107,8 +110,8 @@ const SchedulingSystem: React.FC = () => {
   ];
 
   const timeSlots = [
-    '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
-    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
+    '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', 
+    '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
   ];
 
   const getWeekDays = (date: Date) => {
@@ -141,11 +144,17 @@ const SchedulingSystem: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
       case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
+      case 'upcoming': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'finished': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'available': return 'bg-blue-100 text-blue-800 border-blue-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const toggleAvailability = (dateTime: string) => {
+    setAvailability(prev => new Map(prev.set(dateTime, !prev.get(dateTime))));
   };
 
   const navigateWeek = (direction: 'prev' | 'next') => {
@@ -262,8 +271,17 @@ const SchedulingSystem: React.FC = () => {
                 </div>
                 {weekDays.map((day, dayIndex) => {
                   const slot = getSlotForDateTime(day, time);
+                  const dateTimeKey = `${day.toDateString()}-${time}`;
+                  const isAvailable = availability.get(dateTimeKey) ?? true;
+                  
                   return (
-                    <div key={dayIndex} className="p-2 border-r border-gray-100 last:border-r-0 min-h-[60px]">
+                    <div 
+                      key={dayIndex} 
+                      className={`p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer hover:bg-gray-50 ${
+                        !isAvailable ? 'bg-gray-200' : ''
+                      }`}
+                      onClick={() => !slot && toggleAvailability(dateTimeKey)}
+                    >
                       {slot && (
                         <div
                           onClick={() => setSelectedSlot(slot)}
@@ -290,6 +308,16 @@ const SchedulingSystem: React.FC = () => {
                           <div className="text-xs mt-1 opacity-75">
                             {slot.duration}min
                           </div>
+                        </div>
+                      )}
+                      
+                      {!slot && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          {isAvailable ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <X className="h-4 w-4 text-red-500" />
+                          )}
                         </div>
                       )}
                     </div>
@@ -366,6 +394,37 @@ const SchedulingSystem: React.FC = () => {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Availability Legend */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Legend</h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
+            <span className="text-sm text-gray-700">Pending</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+            <span className="text-sm text-gray-700">Approved</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
+            <span className="text-sm text-gray-700">Upcoming</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
+            <span className="text-sm text-gray-700">Finished</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Check className="h-4 w-4 text-green-500" />
+            <span className="text-sm text-gray-700">Available</span>
+          </div>
+        </div>
+        <p className="text-sm text-gray-600 mt-3">
+          Click on empty time slots to toggle availability for student bookings. 
+          Available hours: 7:00 AM - 10:00 PM
+        </p>
       </div>
 
       {/* Availability Settings */}
