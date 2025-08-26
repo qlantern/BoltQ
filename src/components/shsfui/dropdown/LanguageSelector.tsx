@@ -171,17 +171,19 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     const iconButtonClasses = [
       'flex items-center px-3 py-2 text-sm font-medium',
       darkMode ? 'text-gray-300 hover:text-coral-400' : 'text-gray-700 hover:text-coral-500',
-      'transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2 rounded-md',
+      'transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2 rounded-t-md',
+      isOpen ? (darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200') : '',
+      isOpen ? 'border-b-0' : 'rounded-b-md',
       className
     ].join(' ');
 
     const dropdownClasses = [
-      'absolute top-full right-0 mt-1 w-48 rounded-lg shadow-lg border z-50 overflow-hidden',
+      'absolute w-full rounded-b-lg shadow-lg border border-t-0 z-50 overflow-hidden',
       darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
     ].join(' ');
 
     return (
-      <div className="relative inline-block" role="navigation">
+      <div className="relative inline-block min-w-[120px]" role="navigation">
         <button
           ref={buttonRef}
           className={iconButtonClasses}
@@ -213,9 +215,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
               exit="exit"
               onKeyDown={handleKeyDown}
               style={{ 
-                direction: isRTL ? 'rtl' : 'ltr',
-                right: isRTL ? 'auto' : 0,
-                left: isRTL ? 0 : 'auto'
+                direction: isRTL ? 'rtl' : 'ltr'
               }}
             >
               {languages.map((lang, index) => {
@@ -264,21 +264,23 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   // Full dropdown variant
   const dropdownButtonClasses = [
-    'flex items-center space-x-2 px-4 py-2.5 text-sm font-medium',
-    'rounded-lg transition-colors duration-200',
+    'flex items-center space-x-2 px-4 py-2.5 text-sm font-medium w-full',
+    'transition-colors duration-200',
     'focus:outline-none focus:ring-2 focus:ring-coral-500 focus:ring-offset-2',
+    'rounded-t-lg border',
+    isOpen ? 'border-b-0' : 'rounded-b-lg',
     darkMode
       ? 'text-gray-300 bg-gray-800 border-gray-700 hover:bg-gray-700'
       : 'text-gray-700 bg-white border-gray-300 hover:bg-gray-50'
   ].join(' ');
 
   const fullDropdownClasses = [
-    'absolute top-full mt-1 w-56 rounded-lg shadow-lg border z-50 overflow-hidden',
+    'absolute w-full shadow-lg border border-t-0 z-50 overflow-hidden rounded-b-lg',
     darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
   ].join(' ');
 
   return (
-    <div className={`relative inline-block ${className}`} role="navigation">
+    <div className={`relative inline-block min-w-[200px] ${className}`} role="navigation">
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -293,7 +295,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         </span>
         <span>{currentLanguage.name}</span>
         <ChevronDown 
-          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`h-4 w-4 ml-auto transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           aria-hidden="true"
         />
       </button>
@@ -312,9 +314,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             exit="exit"
             onKeyDown={handleKeyDown}
             style={{ 
-              direction: isRTL ? 'rtl' : 'ltr',
-              left: isRTL ? 'auto' : 0,
-              right: isRTL ? 0 : 'auto'
+              direction: isRTL ? 'rtl' : 'ltr'
             }}
           >
             {languages.map((lang, index) => {
