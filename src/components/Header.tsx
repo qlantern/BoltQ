@@ -7,7 +7,7 @@ import UserMenu from './UserMenu';
 import MessageCenter from './messaging/MessageCenter';
 import MessageNotifications from './messaging/MessageNotifications';
 import LanguageSelector from './LanguageSelector';
-import { DayNightSwitch } from './shsfui/switch/day-night-switch';
+import DayNightSwitch from './shsfui/switch/day-night-switch';
 
 interface HeaderProps {
   onNavigate: (view: string) => void;

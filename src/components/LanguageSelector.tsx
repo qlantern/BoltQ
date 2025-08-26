@@ -13,7 +13,7 @@ interface LanguageSelectorProps {
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'dropdown' }) => {
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
 
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];

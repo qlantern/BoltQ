@@ -62,7 +62,6 @@ const createStarVariants = (index: number): Variants => ({
 
 const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>(
   ({ className, defaultChecked = true, onToggle, ...restProps }, ref) => {
-    const id = React.useId();
     const [checked, setChecked] = React.useState<boolean>(defaultChecked);
 
     const handleToggle = () => {
@@ -76,7 +75,7 @@ const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>(
     return (
       <motion.div
         ref={ref}
-        className={\`relative w-20 h-10 rounded-md overflow-hidden border shadow cursor-pointer \${className || ''}\`}
+        className={`relative w-20 h-10 rounded-md overflow-hidden border shadow cursor-pointer ${className || ''}`}
         variants={backgroundVariants}
         animate={currentMode}
         initial={currentMode}
@@ -129,9 +128,9 @@ const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>(
 
           <div className="absolute inset-0 flex items-center">
             <div 
-              className={\`w-6 h-6 rounded-sm bg-white border border-gray-300 shadow transition-transform duration-500 transform \${
+              className={`w-6 h-6 rounded-sm bg-white border border-gray-300 shadow transition-transform duration-500 transform ${
                 checked ? 'translate-x-12' : 'translate-x-2'
-              }\`}
+              }`}
             />
           </div>
         </div>
@@ -144,13 +143,13 @@ const SunRays = () => (
   <>
     {[...Array(8)].map((_, i) => (
       <div
-        key={\`ray-\${i}\`}
+        key={`ray-${i}`}
         className="absolute bg-yellow-300 w-1 h-2"
         style={{
           left: "50%",
           top: "50%",
           transformOrigin: "0 0",
-          transform: \`rotate(\${i * 45}deg) translate(-50%, -50%) translate(10px, 0)\`,
+          transform: `rotate(${i * 45}deg) translate(-50%, -50%) translate(10px, 0)`,
         }}
       />
     ))}
@@ -199,11 +198,11 @@ const Stars = ({ count }: StarsProps) => (
   <>
     {[...Array(count)].map((_, i) => (
       <motion.div
-        key={\`star-\${i}\`}
+        key={`star-${i}`}
         className="absolute w-0.5 h-0.5 bg-white rounded-full"
         style={{
-          left: \`\${10 + i * 8}%\`,
-          top: \`\${20 + (i % 5) * 12}%\`,
+          left: `${10 + i * 8}%`,
+          top: `${20 + (i % 5) * 12}%`,
           boxShadow: "0 0 2px 1px rgba(255, 255, 255, 0.4)",
         }}
         variants={createStarVariants(i)}
@@ -217,4 +216,4 @@ const Stars = ({ count }: StarsProps) => (
 
 DayNightSwitch.displayName = "DayNightSwitch";
 
-export { DayNightSwitch };
+export default DayNightSwitch;
