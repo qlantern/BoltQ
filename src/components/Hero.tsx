@@ -25,13 +25,13 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
 
           {/* Enhanced Search Bar */}
           <div className="max-w-4xl mx-auto mb-12">
-            <div className="bg-white rounded-xl shadow-2xl p-2">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-2">
               <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">
                 <div className="flex-1 w-full">
                   <input
                     type="text"
                     placeholder="What do you want to learn? (Business English, IELTS, Conversation...)"
-                    className="w-full px-6 py-4 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                    className="w-full px-6 py-4 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
                   />
                 </div>
                 <button

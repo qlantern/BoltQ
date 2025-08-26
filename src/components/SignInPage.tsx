@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Mail } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface SignInPageProps {
   onNavigate: (view: string) => void;
 }
 
 const SignInPage: React.FC<SignInPageProps> = ({ onNavigate }) => {
+  const { signIn } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -40,13 +42,25 @@ const SignInPage: React.FC<SignInPageProps> = ({ onNavigate }) => {
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+    setErrors({});
+
+    try {
+      const { user, error } = await signIn(formData);
+
+      if (error) {
+        setErrors({ form: error.message });
+      } else if (user) {
+        if (user.role === 'teacher') {
+          onNavigate('teacher-dashboard');
+        } else {
+          onNavigate('home');
+        }
+      }
+    } catch (err) {
+      setErrors({ form: 'An unexpected error occurred. Please try again.' });
+    } finally {
       setIsLoading(false);
-      alert('Welcome back to TeachBnB!');
-      onNavigate('home');
-    }, 1500);
+    }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {

@@ -6,14 +6,7 @@ import {
   BookOpen, 
   Settings, 
   Bell, 
-  Search,
-  Plus,
-  BarChart3,
-  DollarSign,
-  Clock,
-  Users,
-  Star,
-  TrendingUp
+  BarChart3
 } from 'lucide-react';
 import ProfileManagement from './ProfileManagement';
 import MessagesSection from './MessagesSection';
@@ -26,58 +19,18 @@ type DashboardTab = 'overview' | 'profile' | 'messages' | 'schedule' | 'listings
 
 const TeacherDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
-  const [notifications, setNotifications] = useState(3);
+  const [notifications] = useState(3);
 
   const navigationItems = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'messages', label: 'Messages', icon: MessageCircle, badge: notifications },
-    { id: 'schedule', label: 'Schedule', icon: Calendar },
-    { id: 'listings', label: 'My Classes', icon: BookOpen },
-    { id: 'settings', label: 'Settings', icon: Settings }
-  ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'overview':
-        return <DashboardOverview />;
-      case 'profile':
-        return <ProfileManagement />;
-      case 'messages':
-        return <MessagesSection />;
-      case 'schedule':
-        return <SchedulingSystem />;
-      case 'listings':
-        return <ListingManagement />;
-      case 'settings':
-        return <SettingsSection />;
-      default:
-        return <DashboardOverview />;
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation Bar */}
+// ... existing code ...
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo and Title */}
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-coral-500">TeachBnB</h1>
               <span className="ml-4 text-gray-600 hidden md:block">Teacher Dashboard</span>
-            </div>
-
-            {/* Search Bar */}
-            <div className="flex-1 max-w-md mx-8 hidden md:block">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search students, classes, messages..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                />
-              </div>
             </div>
 
             {/* Right Side Actions */}
@@ -103,64 +56,3 @@ const TeacherDashboard: React.FC = () => {
           </div>
         </div>
       </header>
-
-      <div className="flex">
-        {/* Sidebar Navigation */}
-        <nav className="w-64 bg-white shadow-sm min-h-screen border-r border-gray-200">
-          <div className="p-4">
-            <div className="space-y-2">
-              {navigationItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id as DashboardTab)}
-                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors duration-200 ${
-                      activeTab === item.id
-                        ? 'bg-coral-50 text-coral-600 border-r-2 border-coral-500'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5 mr-3" />
-                    <span className="font-medium">{item.label}</span>
-                    {item.badge && item.badge > 0 && (
-                      <span className="ml-auto bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="p-4 border-t border-gray-200 mt-8">
-            <h3 className="text-sm font-semibold text-gray-600 mb-3">Quick Actions</h3>
-            <div className="space-y-2">
-              <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
-                <Plus className="h-4 w-4 mr-2" />
-                New Class
-              </button>
-              <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
-                <Calendar className="h-4 w-4 mr-2" />
-                Schedule Lesson
-              </button>
-              <button className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Send Message
-              </button>
-            </div>
-          </div>
-        </nav>
-
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto">
-          {renderContent()}
-        </main>
-      </div>
-    </div>
-  );
-};
-
-export default TeacherDashboard;

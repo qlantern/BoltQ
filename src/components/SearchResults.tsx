@@ -36,7 +36,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex">
         {/* Filter Sidebar */}
         <FilterSidebar isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} />
@@ -44,11 +44,11 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
         {/* Main Content */}
         <div className="flex-1 lg:ml-0">
           {/* Header */}
-          <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4">
+          <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900">English Teachers</h1>
-                <p className="text-gray-600 mt-1">{teachers.length} teachers available</p>
+                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">English Teachers</h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">{teachers.length} teachers available</p>
               </div>
 
               <div className="flex items-center space-x-4">
@@ -56,7 +56,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500"
+                  className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   {sortOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -68,18 +68,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                 {/* Filter Button (Mobile) */}
                 <button
                   onClick={() => setIsFilterOpen(true)}
-                  className="lg:hidden bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center"
+                  className="lg:hidden bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center"
                 >
                   <Filter className="h-4 w-4 mr-2" />
                   Filters
                 </button>
 
                 {/* View Toggle */}
-                <div className="hidden sm:flex bg-gray-100 rounded-lg p-1">
-                  <button className="bg-white shadow-sm rounded-md px-3 py-1 text-sm font-medium text-gray-900">
+                <div className="hidden sm:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <button className="bg-white dark:bg-gray-600 shadow-sm rounded-md px-3 py-1 text-sm font-medium text-gray-900 dark:text-white">
                     Grid
                   </button>
-                  <button className="text-gray-500 hover:text-gray-900 px-3 py-1 text-sm font-medium">
+                  <button className="text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-3 py-1 text-sm font-medium">
                     List
                   </button>
                 </div>

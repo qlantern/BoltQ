@@ -176,7 +176,7 @@ function App() {
       )}
 
       {currentView === 'home' && (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white dark:bg-gray-900">
           <Header onNavigate={setCurrentView} />
           
           {/* Hero Section */}
@@ -188,13 +188,13 @@ function App() {
           </div>
 
           {/* Featured Teachers Section */}
-          <section className="py-16 bg-gray-50">
+          <section className="py-16 bg-gray-50 dark:bg-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                   Featured English Teachers
                 </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                   Discover our top-rated teachers who have helped thousands of students 
                   achieve their English learning goals.
                 </p>
@@ -224,44 +224,44 @@ function App() {
           </section>
 
           {/* How It Works Section */}
-          <section className="py-16 bg-white">
+          <section className="py-16 bg-white dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                   How TeachBnB Works
                 </h2>
-                <p className="text-lg text-gray-600">
+                <p className="text-lg text-gray-600 dark:text-gray-300">
                   Learning English has never been easier
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="text-center">
-                  <div className="bg-coral-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                    <span className="text-2xl font-bold text-coral-600">1</span>
+                  <div className="bg-coral-100 dark:bg-coral-900 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                    <span className="text-2xl font-bold text-coral-600 dark:text-coral-300">1</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-4">Find Your Teacher</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-xl font-semibold mb-4 dark:text-white">Find Your Teacher</h3>
+                  <p className="text-gray-600 dark:text-gray-300">
                     Browse through our qualified teachers, read reviews, and find the perfect match for your learning style and goals.
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="bg-teal-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                    <span className="text-2xl font-bold text-teal-600">2</span>
+                  <div className="bg-teal-100 dark:bg-teal-900 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                    <span className="text-2xl font-bold text-teal-600 dark:text-teal-300">2</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-4">Book Your Lesson</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-xl font-semibold mb-4 dark:text-white">Book Your Lesson</h3>
+                  <p className="text-gray-600 dark:text-gray-300">
                     Schedule lessons at your convenience. Choose from one-time sessions or ongoing courses to fit your schedule.
                   </p>
                 </div>
 
                 <div className="text-center">
-                  <div className="bg-yellow-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                    <span className="text-2xl font-bold text-yellow-600">3</span>
+                  <div className="bg-yellow-100 dark:bg-yellow-900 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
+                    <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">3</span>
                   </div>
-                  <h3 className="text-xl font-semibold mb-4">Start Learning</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-xl font-semibold mb-4 dark:text-white">Start Learning</h3>
+                  <p className="text-gray-600 dark:text-gray-300">
                     Begin your personalized English learning journey with expert guidance and achieve your language goals faster.
                   </p>
                 </div>
@@ -338,16 +338,14 @@ function App() {
                       </button>
                     </li>
                     <li><a href="#" className="hover:text-white">Teacher Resources</a></li>
-                    {isAuthenticated && user?.role === 'teacher' && (
-                      <li>
+                    <li>
                       <button 
                         onClick={() => setCurrentView('teacher-dashboard')}
                         className="hover:text-white text-left"
                       >
-                        Teacher Dashboard
+                        Dashboard
                       </button>
-                      </li>
-                    )}
+                    </li>
                     <li><a href="#" className="hover:text-white">Community</a></li>
                     <li><a href="#" className="hover:text-white">Support</a></li>
                   </ul>
