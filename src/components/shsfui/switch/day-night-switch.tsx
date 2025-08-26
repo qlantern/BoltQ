@@ -60,8 +60,10 @@ const createStarVariants = (index: number): Variants => ({
   },
 });
 
-const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>(
-  ({ className, defaultChecked = true, onToggle, ...restProps }, ref) => {
+const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>((
+  { className, defaultChecked = true, onToggle, ...restProps },
+  ref
+) => {
     const [checked, setChecked] = React.useState<boolean>(defaultChecked);
 
     const handleToggle = () => {
