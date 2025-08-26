@@ -1,14 +1,13 @@
 import React from 'react';
 import { Search, Star, Users, BookOpen, Award } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 
 interface HeroProps {
   onSearchClick?: () => void;
   onBecomeTeacherClick?: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
-  const { user, isAuthenticated } = useAuth();
+const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
+  // const { user, isAuthenticated } = useAuth();
 
   return (
     <div className="relative bg-gradient-to-br from-coral-500 via-coral-400 to-orange-400">
@@ -35,17 +34,10 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
                     className="w-full px-6 py-4 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
                   />
                 </div>
-                <div className="w-full md:w-auto">
-                  <select className="w-full md:w-auto px-6 py-4 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500 border-l border-gray-200">
-                    <option>All Class Types</option>
-                    <option>Online Classes</option>
-                    <option>Offline Classes</option>
-                    <option>Algiers</option>
-                    <option>Oran</option>
-                    <option>Constantine</option>
-                  </select>
-                </div>
-                <button className="w-full md:w-auto bg-coral-500 text-white px-8 py-4 rounded-lg hover:bg-coral-600 transition-colors duration-200 flex items-center justify-center font-semibold">
+                <button
+                  className="w-full md:w-auto bg-coral-500 text-white px-8 py-4 rounded-lg hover:bg-coral-600 transition-colors duration-200 flex items-center justify-center font-semibold"
+                  onClick={onSearchClick}
+                >
                   <Search className="h-5 w-5 mr-2" />
                   Search Teachers
                 </button>

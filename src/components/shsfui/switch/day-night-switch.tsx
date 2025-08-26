@@ -77,7 +77,7 @@ const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>((
     return (
       <motion.div
         ref={ref}
-        className={`relative w-20 h-10 rounded-md overflow-hidden border shadow cursor-pointer ${className || ''}`}
+        className={`relative w-[72px] h-[36px] rounded-md overflow-hidden border shadow cursor-pointer ${className || ''}`}
         variants={backgroundVariants}
         animate={currentMode}
         initial={currentMode}
@@ -131,7 +131,7 @@ const DayNightSwitch = React.forwardRef<HTMLDivElement, DayNightSwitchProps>((
           <div className="absolute inset-0 flex items-center">
             <div 
               className={`w-6 h-6 rounded-sm bg-white border border-gray-300 shadow transition-transform duration-500 transform ${
-                checked ? 'translate-x-12' : 'translate-x-2'
+                checked ? 'translate-x-10' : 'translate-x-2'
               }`}
             />
           </div>

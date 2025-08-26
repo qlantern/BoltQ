@@ -41,9 +41,8 @@ const Header = ({ onNavigate }: HeaderProps) => {
           <div className="flex-1"></div>
 
           {/* Right Navigation - fixed to right */}
-          <div className="w-auto flex items-center space-x-4 px-8 border-l border-gray-200">
+          <div className="w-auto flex items-center space-x-2 px-8 border-l border-gray-200">
             <DayNightSwitch
-              className="mr-4"
               defaultChecked={true}
               onToggle={(checked) => {
                 document.documentElement.classList.toggle('dark', !checked);
