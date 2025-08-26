@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  User, 
-  MessageCircle, 
-  Calendar, 
-  BookOpen, 
-  Settings, 
-  Bell, 
-  BarChart3
-} from 'lucide-react';
-import ProfileManagement from './ProfileManagement';
-import MessagesSection from './MessagesSection';
-import SchedulingSystem from './SchedulingSystem';
-import ListingManagement from './ListingManagement';
-import DashboardOverview from './DashboardOverview';
-import SettingsSection from './SettingsSection';
+  Bell} from 'lucide-react';
 
 type DashboardTab = 'overview' | 'profile' | 'messages' | 'schedule' | 'listings' | 'settings';
 
@@ -21,9 +8,29 @@ const TeacherDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
   const [notifications] = useState(3);
 
-  const navigationItems = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-// ... existing code ...
+  // Example tab content
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <div>Overview Content</div>;
+      case 'profile':
+        return <div>Profile Content</div>;
+      case 'messages':
+        return <div>Messages Content</div>;
+      case 'schedule':
+        return <div>Schedule Content</div>;
+      case 'listings':
+        return <div>Listings Content</div>;
+      case 'settings':
+        return <div>Settings Content</div>;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation Bar */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -32,6 +39,58 @@ const TeacherDashboard: React.FC = () => {
               <h1 className="text-2xl font-bold text-coral-500">TeachBnB</h1>
               <span className="ml-4 text-gray-600 hidden md:block">Teacher Dashboard</span>
             </div>
+
+            {/* Tabs */}
+            <nav className="ml-8 flex space-x-4">
+              <button
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'overview' ? 'bg-coral-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab('overview')}
+              >
+                Overview
+              </button>
+              <button
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'profile' ? 'bg-coral-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab('profile')}
+              >
+                Profile
+              </button>
+              <button
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'messages' ? 'bg-coral-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab('messages')}
+              >
+                Messages
+              </button>
+              <button
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'schedule' ? 'bg-coral-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab('schedule')}
+              >
+                Schedule
+              </button>
+              <button
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'listings' ? 'bg-coral-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab('listings')}
+              >
+                Listings
+              </button>
+              <button
+                className={`px-3 py-2 rounded-md text-sm font-medium ${
+                  activeTab === 'settings' ? 'bg-coral-500 text-white' : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                onClick={() => setActiveTab('settings')}
+              >
+                Settings
+              </button>
+            </nav>
 
             {/* Right Side Actions */}
             <div className="flex items-center space-x-4">
@@ -56,3 +115,12 @@ const TeacherDashboard: React.FC = () => {
           </div>
         </div>
       </header>
+      {/* Tab Content */}
+              <main className="p-4">
+                {renderTabContent()}
+              </main>
+            </div>
+        );
+      };
+      
+      export default TeacherDashboard;

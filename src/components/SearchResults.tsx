@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Filter, SlidersHorizontal } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import TeacherCard from './TeacherCard';
 import FilterSidebar from './FilterSidebar';
 import { Teacher } from '../types';

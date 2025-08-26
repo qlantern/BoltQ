@@ -10,7 +10,7 @@ import SignInPage from './components/SignInPage';
 import BecomeTeacherPage from './components/BecomeTeacherPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
-import TeacherDashboard from './components/teacher/TeacherDashboard';
+import { TeacherDashboard } from './components/teacher/TeacherDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
