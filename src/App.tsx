@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AuthProvider } from './contexts/AuthContext';
+import { useState } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TeacherCard from './components/TeacherCard';
@@ -10,21 +10,19 @@ import SignInPage from './components/SignInPage';
 import BecomeTeacherPage from './components/BecomeTeacherPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
-import { TeacherDashboard } from './components/teacher/TeacherDashboard';
+import TeacherDashboard from './components/teacher/TeacherDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 import { adminService } from './services/adminService';
-import { useAuth } from './contexts/AuthContext';
 
 type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard' | 'teacher-dashboard';
 
-function App() {
+function AppContent() {
   const { user, isAuthenticated } = useAuth();
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [favoritedTeachers, setFavoritedTeachers] = useState<Set<string>>(new Set());
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   const handleFavorite = (teacherId: string) => {
     setFavoritedTeachers(prev => {
@@ -47,11 +45,6 @@ function App() {
     setCurrentView('search');
   };
 
-  const handleBackToHome = () => {
-    setCurrentView('home');
-    setSelectedTeacher(null);
-  };
-
   const handleBackToSearch = () => {
     setCurrentView('search');
     setSelectedTeacher(null);
@@ -63,18 +56,16 @@ function App() {
   };
 
   const handleAdminLogin = () => {
-    setIsAdminAuthenticated(true);
     setCurrentView('admin-dashboard');
   };
 
   const handleAdminLogout = async () => {
     await adminService.logout();
-    setIsAdminAuthenticated(false);
     setCurrentView('home');
   };
 
   return (
-    <AuthProvider>
+    <>
       {/* Auth pages */}
       {currentView === 'signup' && (
         <ProtectedRoute requireGuest onRedirect={handleNavigate}>
@@ -117,7 +108,27 @@ function App() {
       )}
 
       {currentView === 'admin-dashboard' && (
-        <AdminDashboard onNavigate={handleNavigate} />
+        <ProtectedRoute
+          requireAuth
+          role="admin"
+          onRedirect={handleNavigate}
+          fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Admin Access Required</h2>
+            <p className="text-gray-600 mb-6">Please sign in as an administrator to access this page.</p>
+            <button 
+          onClick={() => handleNavigate('admin-login')}
+          className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+            >
+          Admin Login
+            </button>
+          </div>
+        </div>
+          }
+        >
+          <AdminDashboard onNavigate={handleNavigate} onLogout={handleAdminLogout} />
+        </ProtectedRoute>
       )}
 
       {currentView === 'teacher-dashboard' && (
@@ -177,7 +188,7 @@ function App() {
 
       {currentView === 'home' && (
         <div className="min-h-screen bg-white dark:bg-gray-900">
-          <Header onNavigate={setCurrentView} />
+          <Header onNavigate={handleNavigate} />
           
           {/* Hero Section */}
           <div className="cursor-pointer">
@@ -375,6 +386,14 @@ function App() {
           </footer>
         </div>
       )}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
     </AuthProvider>
   );
 }
