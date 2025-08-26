@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Menu, MessageCircle, Heart, Globe, Bell } from 'lucide-react';
+import { Search, Menu, MessageCircle, Heart, Bell } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useMessaging } from '../hooks/useMessaging';
 import UserMenu from './UserMenu';
 import MessageCenter from './messaging/MessageCenter';
 import MessageNotifications from './messaging/MessageNotifications';
+import LanguageSelector from './LanguageSelector';
 
 interface HeaderProps {
   onNavigate: (view: string) => void;
@@ -13,7 +15,7 @@ interface HeaderProps {
 const Header = ({ onNavigate }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMessageCenterOpen, setIsMessageCenterOpen] = useState(false);
-  
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   
   // Mock current user ID - in real app this would come from auth context
@@ -39,16 +41,14 @@ const Header = ({ onNavigate }: HeaderProps) => {
 
           {/* Right Navigation - fixed to right */}
           <div className="w-auto flex items-center space-x-4 px-8 border-l border-gray-200">
-            <button className="hidden md:flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-coral-500 transition-colors duration-200">
-              <Globe className="h-4 w-4 mr-1" />
-              EN
-            </button>
+            <LanguageSelector variant="icon" />
 
             {isAuthenticated && (
               <>
                 <button 
                   onClick={() => setIsMessageCenterOpen(true)}
                   className="relative text-gray-700 hover:text-coral-500 transition-colors duration-200"
+                  title={t('common.messages')}
                 >
                   <MessageCircle className="h-5 w-5" />
                   {unreadCount > 0 && (
@@ -58,11 +58,17 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   )}
                 </button>
 
-                <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
+                <button 
+                  className="text-gray-700 hover:text-coral-500 transition-colors duration-200"
+                  title={t('common.notifications')}
+                >
                   <Bell className="h-5 w-5" />
                 </button>
 
-                <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
+                <button 
+                  className="text-gray-700 hover:text-coral-500 transition-colors duration-200"
+                  title={t('common.favorites')}
+                >
                   <Heart className="h-5 w-5" />
                 </button>
               </>
@@ -92,7 +98,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
               onClick={() => onNavigate('search')}
               className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
             >
-              Find Teachers
+              {t('common.findTeachers')}
             </button>
             {!isAuthenticated && (
               <>
@@ -100,25 +106,28 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   onClick={() => onNavigate('become-teacher')}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
                 >
-                  Become a Teacher
+                  {t('common.becomeTeacher')}
                 </button>
                 <button 
                   onClick={() => onNavigate('signup')}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
                 >
-                  Sign up
+                  {t('common.signUp')}
                 </button>
                 <button 
                   onClick={() => onNavigate('signin')}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500"
                 >
-                  Log in
+                  {t('common.logIn')}
                 </button>
               </>
             )}
             <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500">
-              Help
+              {t('common.help')}
             </button>
+            <div className="px-3 py-2">
+              <LanguageSelector variant="dropdown" />
+            </div>
           </div>
         </div>
       )}
