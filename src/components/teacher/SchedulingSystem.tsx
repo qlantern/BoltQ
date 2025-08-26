@@ -13,8 +13,10 @@ import {
   Copy,
   ExternalLink,
   Check,
-  X
+  X,
+  Eye
 } from 'lucide-react';
+import ScheduleDetailsModal from './ScheduleDetailsModal';
 
 interface TimeSlot {
   id: string;
@@ -41,9 +43,10 @@ const SchedulingSystem: React.FC = () => {
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
   const [showNewEventModal, setShowNewEventModal] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
-  const [availability, setAvailability] = useState<Map<string, boolean>>(new Map());
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [selectedDateTime, setSelectedDateTime] = useState<{ date: Date; time: string } | null>(null);
 
-  // Mock schedule data
+  // Enhanced mock schedule data with color-coded statuses
   const schedule: DaySchedule[] = [
     {
       date: new Date(2024, 0, 22), // Today
@@ -58,12 +61,12 @@ const SchedulingSystem: React.FC = () => {
           },
           subject: 'Business English',
           type: 'online',
-          status: 'approved',
+          status: 'pending',
           meetingLink: 'https://zoom.us/j/123456789'
         },
         {
           id: '2',
-          time: '14:00',
+          time: '11:00',
           duration: 90,
           student: {
             name: 'Maria Garcia',
@@ -71,12 +74,12 @@ const SchedulingSystem: React.FC = () => {
           },
           subject: 'IELTS Preparation',
           type: 'online',
-          status: 'upcoming',
+          status: 'approved',
           meetingLink: 'https://meet.google.com/abc-defg-hij'
         },
         {
           id: '3',
-          time: '16:00',
+          time: '14:00',
           duration: 60,
           student: {
             name: 'Lisa Park',
@@ -84,8 +87,21 @@ const SchedulingSystem: React.FC = () => {
           },
           subject: 'Conversation Practice',
           type: 'offline',
-          status: 'pending',
+          status: 'upcoming',
           location: 'Central Library, Room 204'
+        },
+        {
+          id: '4',
+          time: '16:00',
+          duration: 60,
+          student: {
+            name: 'John Smith',
+            avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Grammar Review',
+          type: 'online',
+          status: 'finished',
+          meetingLink: 'https://zoom.us/j/987654321'
         }
       ]
     },
@@ -93,17 +109,30 @@ const SchedulingSystem: React.FC = () => {
       date: new Date(2024, 0, 23), // Tomorrow
       slots: [
         {
-          id: '4',
+          id: '5',
           time: '10:00',
           duration: 60,
           student: {
-            name: 'John Smith',
-            avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+            name: 'Sarah Wilson',
+            avatar: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
           },
-          subject: 'Grammar Fundamentals',
+          subject: 'Academic Writing',
           type: 'online',
-          status: 'finished',
-          meetingLink: 'https://zoom.us/j/987654321'
+          status: 'approved',
+          meetingLink: 'https://zoom.us/j/555666777'
+        },
+        {
+          id: '6',
+          time: '15:00',
+          duration: 90,
+          student: {
+            name: 'David Brown',
+            avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Business Presentation',
+          type: 'offline',
+          status: 'pending',
+          location: 'Downtown Office, Conference Room A'
         }
       ]
     }
@@ -144,7 +173,7 @@ const SchedulingSystem: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'pending': return 'bg-red-100 text-red-800 border-red-200';
       case 'approved': return 'bg-green-100 text-green-800 border-green-200';
       case 'upcoming': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'finished': return 'bg-gray-100 text-gray-800 border-gray-200';
@@ -153,8 +182,13 @@ const SchedulingSystem: React.FC = () => {
     }
   };
 
-  const toggleAvailability = (dateTime: string) => {
-    setAvailability(prev => new Map(prev.set(dateTime, !prev.get(dateTime))));
+  const handleSlotClick = (date: Date, time: string, slot?: TimeSlot) => {
+    if (slot) {
+      setSelectedSlot(slot);
+    } else {
+      setSelectedDateTime({ date, time });
+    }
+    setShowScheduleModal(true);
   };
 
   const navigateWeek = (direction: 'prev' | 'next') => {
@@ -271,29 +305,22 @@ const SchedulingSystem: React.FC = () => {
                 </div>
                 {weekDays.map((day, dayIndex) => {
                   const slot = getSlotForDateTime(day, time);
-                  const dateTimeKey = `${day.toDateString()}-${time}`;
-                  const isAvailable = availability.get(dateTimeKey) ?? true;
                   
                   return (
                     <div 
                       key={dayIndex} 
-                      className={`p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer hover:bg-gray-50 ${
-                        !isAvailable ? 'bg-gray-200' : ''
-                      }`}
-                      onClick={() => !slot && toggleAvailability(dateTimeKey)}
+                      className="p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => handleSlotClick(day, time, slot)}
                     >
-                      {slot && (
-                        <div
-                          onClick={() => setSelectedSlot(slot)}
-                          className={`p-2 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(slot.status)}`}
-                        >
+                      {slot ? (
+                        <div className={`p-2 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(slot.status)}`}>
                           <div className="flex items-center space-x-2 mb-1">
                             {slot.type === 'online' ? (
                               <Video className="h-3 w-3" />
                             ) : (
                               <MapPin className="h-3 w-3" />
                             )}
-                            <span className="text-xs font-medium">{slot.subject}</span>
+                            <span className="text-xs font-medium truncate">{slot.subject}</span>
                           </div>
                           {slot.student && (
                             <div className="flex items-center space-x-1">
@@ -309,15 +336,9 @@ const SchedulingSystem: React.FC = () => {
                             {slot.duration}min
                           </div>
                         </div>
-                      )}
-                      
-                      {!slot && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          {isAvailable ? (
-                            <Check className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <X className="h-4 w-4 text-red-500" />
-                          )}
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                          <Plus className="h-4 w-4 text-gray-400" />
                         </div>
                       )}
                     </div>
@@ -366,7 +387,7 @@ const SchedulingSystem: React.FC = () => {
                         {slot.location}
                       </div>
                     )}
-                    <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(slot.status)}`}>
+                    <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(slot.status)}`}>
                       {slot.status}
                     </span>
                   </div>
@@ -379,6 +400,15 @@ const SchedulingSystem: React.FC = () => {
                     <ExternalLink className="h-4 w-4" />
                   </button>
                 )}
+                <button 
+                  onClick={() => {
+                    setSelectedSlot(slot);
+                    setShowScheduleModal(true);
+                  }}
+                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
                 <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
                   <Edit3 className="h-4 w-4" />
                 </button>
@@ -396,7 +426,7 @@ const SchedulingSystem: React.FC = () => {
         </div>
       </div>
 
-      {/* Availability Legend */}
+      {/* Schedule Legend - Moved below calendar */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Legend</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -417,49 +447,22 @@ const SchedulingSystem: React.FC = () => {
             <span className="text-sm text-gray-700">Finished</span>
           </div>
           <div className="flex items-center space-x-2">
-            <Check className="h-4 w-4 text-green-500" />
-            <span className="text-sm text-gray-700">Available</span>
+            <Plus className="h-4 w-4 text-gray-400" />
+            <span className="text-sm text-gray-700">Click to schedule</span>
           </div>
         </div>
         <p className="text-sm text-gray-600 mt-3">
-          Click on empty time slots to toggle availability for student bookings. 
+          Click on any time slot to view details or schedule a new lesson. 
           Available hours: 7:00 AM - 10:00 PM
         </p>
       </div>
 
-      {/* Availability Settings */}
+      {/* Booking Settings */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Availability Settings</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Booking Settings</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h4 className="font-medium text-gray-900 mb-3">Weekly Availability</h4>
-            <div className="space-y-2">
-              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => (
-                <div key={day} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">{day}</span>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="time"
-                      defaultValue="09:00"
-                      className="text-xs border border-gray-300 rounded px-2 py-1"
-                    />
-                    <span className="text-xs text-gray-500">to</span>
-                    <input
-                      type="time"
-                      defaultValue="18:00"
-                      className="text-xs border border-gray-300 rounded px-2 py-1"
-                    />
-                    <button className="text-xs text-coral-500 hover:text-coral-600">
-                      Copy
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-gray-900 mb-3">Booking Settings</h4>
+            <h4 className="font-medium text-gray-900 mb-3">Booking Preferences</h4>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -484,7 +487,12 @@ const SchedulingSystem: React.FC = () => {
                   <option>3 months</option>
                 </select>
               </div>
+            </div>
+          </div>
 
+          <div>
+            <h4 className="font-medium text-gray-900 mb-3">Automation Settings</h4>
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Allow recurring bookings</span>
                 <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-coral-500">
@@ -502,6 +510,18 @@ const SchedulingSystem: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Schedule Details Modal */}
+      <ScheduleDetailsModal
+        isOpen={showScheduleModal}
+        onClose={() => {
+          setShowScheduleModal(false);
+          setSelectedSlot(null);
+          setSelectedDateTime(null);
+        }}
+        slot={selectedSlot}
+        dateTime={selectedDateTime}
+      />
     </div>
   );
 };

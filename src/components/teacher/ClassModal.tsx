@@ -72,12 +72,17 @@ const ClassModal: React.FC<ClassModalProps> = ({
     'Upper-Intermediate', 'Advanced', 'Proficiency', 'All Levels'
   ];
 
+  const [customSubject, setCustomSubject] = useState('');
+  const [customLevel, setCustomLevel] = useState('');
+  const [useCustomSubject, setUseCustomSubject] = useState(false);
+  const [useCustomLevel, setUseCustomLevel] = useState(false);
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.subject) newErrors.subject = 'Subject is required';
+    if (!formData.subject && !customSubject.trim()) newErrors.subject = 'Subject is required';
     if (formData.price.individual <= 0) newErrors.price = 'Price must be greater than 0';
     if (formData.duration <= 0) newErrors.duration = 'Duration must be greater than 0';
     if (formData.type === 'group' && (!formData.maxStudents || formData.maxStudents <= 1)) {
@@ -93,8 +98,13 @@ const ClassModal: React.FC<ClassModalProps> = ({
 
   const handleSubmit = () => {
     if (validateForm()) {
+      const finalSubject = useCustomSubject ? customSubject : formData.subject;
+      const finalLevel = useCustomLevel ? customLevel : formData.level;
+      
       onSave({
         ...formData,
+        subject: finalSubject,
+        level: finalLevel,
         id: editingClass?.id
       });
       onClose();
@@ -223,6 +233,18 @@ const ClassModal: React.FC<ClassModalProps> = ({
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Subject *
                         </label>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="preset-subject"
+                              checked={!useCustomSubject}
+                              onChange={() => setUseCustomSubject(false)}
+                              className="text-coral-500 focus:ring-coral-500"
+                            />
+                            <label htmlFor="preset-subject" className="text-sm text-gray-700">Choose from list</label>
+                          </div>
+                          {!useCustomSubject ? (
                         <select
                           value={formData.subject}
                           onChange={(e) => handleInputChange('subject', e.target.value)}
@@ -235,6 +257,28 @@ const ClassModal: React.FC<ClassModalProps> = ({
                             <option key={subject} value={subject}>{subject}</option>
                           ))}
                         </select>
+                          ) : (
+                            <input
+                              type="text"
+                              value={customSubject}
+                              onChange={(e) => setCustomSubject(e.target.value)}
+                              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500 ${
+                                errors.subject ? 'border-red-300' : 'border-gray-300'
+                              }`}
+                              placeholder="Enter custom subject"
+                            />
+                          )}
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="custom-subject"
+                              checked={useCustomSubject}
+                              onChange={() => setUseCustomSubject(true)}
+                              className="text-coral-500 focus:ring-coral-500"
+                            />
+                            <label htmlFor="custom-subject" className="text-sm text-gray-700">Enter custom subject</label>
+                          </div>
+                        </div>
                         {errors.subject && <p className="text-red-600 text-sm mt-1">{errors.subject}</p>}
                       </div>
 
@@ -242,6 +286,18 @@ const ClassModal: React.FC<ClassModalProps> = ({
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Level
                         </label>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="preset-level"
+                              checked={!useCustomLevel}
+                              onChange={() => setUseCustomLevel(false)}
+                              className="text-coral-500 focus:ring-coral-500"
+                            />
+                            <label htmlFor="preset-level" className="text-sm text-gray-700">Choose from list</label>
+                          </div>
+                          {!useCustomLevel ? (
                         <select
                           value={formData.level}
                           onChange={(e) => handleInputChange('level', e.target.value)}
@@ -251,6 +307,26 @@ const ClassModal: React.FC<ClassModalProps> = ({
                             <option key={level} value={level}>{level}</option>
                           ))}
                         </select>
+                          ) : (
+                            <input
+                              type="text"
+                              value={customLevel}
+                              onChange={(e) => setCustomLevel(e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                              placeholder="Enter custom level"
+                            />
+                          )}
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="radio"
+                              id="custom-level"
+                              checked={useCustomLevel}
+                              onChange={() => setUseCustomLevel(true)}
+                              className="text-coral-500 focus:ring-coral-500"
+                            />
+                            <label htmlFor="custom-level" className="text-sm text-gray-700">Enter custom level</label>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -166,16 +166,13 @@ const ProfileManagement: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profileData.firstName}
-                    onChange={(e) => handleInputChange('firstName', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                  />
-                ) : (
-                  <p className="text-gray-900">{profileData.firstName}</p>
-                )}
+                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.firstName}</p>
+                <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.lastName}</p>
+                <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nickname</label>
@@ -191,31 +188,10 @@ const ProfileManagement: React.FC = () => {
                   <p className="text-gray-900">{profileData.nickname || 'Not set'}</p>
                 )}
               </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profileData.lastName}
-                    onChange={(e) => handleInputChange('lastName', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                  />
-                ) : (
-                  <p className="text-gray-900">{profileData.lastName}</p>
-                )}
-              </div>
-              <div className="md:col-span-2">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={profileData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                  />
-                ) : (
-                  <p className="text-gray-900">{profileData.location}</p>
-                )}
+                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.location}</p>
+                <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
@@ -240,29 +216,13 @@ const ProfileManagement: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Experience (Years)</label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={profileData.experience}
-                      onChange={(e) => handleInputChange('experience', parseInt(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{profileData.experience} years</p>
-                  )}
+                  <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.experience} years</p>
+                  <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Hourly Rate (DZD)</label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={profileData.hourlyRate}
-                      onChange={(e) => handleInputChange('hourlyRate', parseInt(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{profileData.hourlyRate} DZD</p>
-                  )}
+                  <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.hourlyRate} DZD</p>
+                  <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
                 </div>
               </div>
 
@@ -278,6 +238,7 @@ const ProfileManagement: React.FC = () => {
                     </span>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
               </div>
 
               <div>
@@ -292,6 +253,7 @@ const ProfileManagement: React.FC = () => {
                     </span>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
               </div>
 
               <div>
@@ -304,6 +266,7 @@ const ProfileManagement: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
               </div>
 
               <div>
@@ -316,6 +279,7 @@ const ProfileManagement: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
               </div>
             </div>
           </div>
