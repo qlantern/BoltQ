@@ -5,7 +5,6 @@ import {
   Save, 
   X, 
   MapPin,
-  Globe,
   Award,
   BookOpen,
   Star,
@@ -115,12 +114,12 @@ const ProfileManagement: React.FC = () => {
 
         {/* Profile Photo */}
         <div className="relative px-6 pb-6">
-          <div className="flex items-end -mt-16 mb-6">
+          <div className="flex items-end -mt-14 mb-6">
             <div className="relative">
               <img
-                src="https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop"
+                src="https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&fit=crop"
                 alt="Profile"
-                className="w-32 h-32 rounded-full border-4 border-white object-cover"
+                className="w-64 h-64 rounded-lg border-4 border-white object-cover mt-2.5"
               />
               {isEditing && (
                 <button onClick={() => openPhotoUpload('profile')} className="absolute bottom-2 right-2 bg-coral-500 text-white p-2 rounded-full hover:bg-coral-600">
@@ -157,129 +156,116 @@ const ProfileManagement: React.FC = () => {
         </div>
       </div>
 
+      {/* Main Profile Information */}
       <div className="grid grid-cols-1 gap-6">
-        {/* Main Profile Information */}
-        <div className="space-y-6">
-          {/* Basic Information */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.firstName}</p>
-                <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.lastName}</p>
-                <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Nickname</label>
-                {isEditing ? (
+        {/* Basic Information */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+              <p className="text-gray-900">{profileData.firstName}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+              <p className="text-gray-900">{profileData.lastName}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nickname</label>
+              {isEditing ? (
+                <div>
                   <input
                     type="text"
                     value={profileData.nickname}
                     onChange={(e) => handleInputChange('nickname', e.target.value)}
+                    maxLength={15}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
                     placeholder="Optional display name"
                   />
-                ) : (
-                  <p className="text-gray-900">{profileData.nickname || 'Not set'}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.location}</p>
-                <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                {isEditing ? (
-                  <textarea
-                    value={profileData.bio}
-                    onChange={(e) => handleInputChange('bio', e.target.value)}
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
-                  />
-                ) : (
-                  <p className="text-gray-700">{profileData.bio}</p>
-                )}
-              </div>
+                  <p className="text-xs text-gray-500 mt-1">{(profileData.nickname?.length || 0)}/15 characters</p>
+                </div>
+              ) : (
+                <p className="text-gray-900">{profileData.nickname || 'Not set'}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+              <p className="text-gray-900">{profileData.location}</p>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+              {isEditing ? (
+                <textarea
+                  value={profileData.bio}
+                  onChange={(e) => handleInputChange('bio', e.target.value)}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
+                />
+              ) : (
+                <p className="text-gray-700">{profileData.bio}</p>
+              )}
             </div>
           </div>
+        </div>
 
-          {/* Professional Information */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Experience (Years)</label>
-                  <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.experience} years</p>
-                  <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Hourly Rate (DZD)</label>
-                  <p className="text-gray-900 bg-gray-50 px-3 py-2 rounded-lg">{profileData.hourlyRate} DZD</p>
-                  <p className="text-xs text-gray-500 mt-1">Contact support to change this information</p>
-                </div>
+        {/* Professional Information */}
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Professional Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
+              <p className="text-gray-900">{profileData.experience} years teaching experience</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Hourly Rate</label>
+              <p className="text-gray-900">{profileData.hourlyRate} DZD per hour</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Teaching Specialties</label>
+              <div className="flex flex-wrap gap-2">
+                {profileData.specialties.map((specialty, index) => (
+                  <span
+                    key={index}
+                    className="bg-coral-100 text-coral-700 px-3 py-1 rounded-full text-sm"
+                  >
+                    {specialty}
+                  </span>
+                ))}
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Languages</label>
-                <div className="flex flex-wrap gap-2">
-                  {profileData.languages.map((language, index) => (
-                    <span
-                      key={index}
-                      className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
-                    >
-                      {language}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Languages</label>
+              <div className="flex flex-wrap gap-2">
+                {profileData.languages.map((language, index) => (
+                  <span
+                    key={index}
+                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"
+                  >
+                    {language}
+                  </span>
+                ))}
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Specialties</label>
-                <div className="flex flex-wrap gap-2">
-                  {profileData.specialties.map((specialty, index) => (
-                    <span
-                      key={index}
-                      className="bg-coral-100 text-coral-700 px-3 py-1 rounded-full text-sm"
-                    >
-                      {specialty}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Education</label>
+              <div className="space-y-2">
+                {profileData.education.map((edu, index) => (
+                  <div key={index} className="flex items-center">
+                    <Award className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-gray-700">{edu}</span>
+                  </div>
+                ))}
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Education</label>
-                <div className="space-y-2">
-                  {profileData.education.map((edu, index) => (
-                    <div key={index} className="flex items-center">
-                      <Award className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-gray-700">{edu}</span>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Certifications</label>
-                <div className="space-y-2">
-                  {profileData.certifications.map((cert, index) => (
-                    <div key={index} className="flex items-center">
-                      <BookOpen className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-gray-700">{cert}</span>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-500 mt-2">Contact support to change this information</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Certifications</label>
+              <div className="space-y-2">
+                {profileData.certifications.map((cert, index) => (
+                  <div key={index} className="flex items-center">
+                    <BookOpen className="h-4 w-4 text-gray-400 mr-2" />
+                    <span className="text-gray-700">{cert}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

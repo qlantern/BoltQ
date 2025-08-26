@@ -27,57 +27,46 @@ const Header = ({ onNavigate }: HeaderProps) => {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <span className="text-2xl font-bold text-coral-500">TeachBnB</span>
-            </div>
+      <div className="w-full">
+        <div className="flex items-center h-16">
+          {/* Logo fixed to left */}
+          <div className="w-60 px-8 border-r border-gray-200">
+            <span className="text-2xl font-bold text-coral-500">TeachBnB</span>
           </div>
 
-          {/* Search Bar - Desktop */}
-          <div className="hidden md:flex items-center max-w-md w-full mx-8">
-            <div className="relative w-full">
-              <div className="flex items-center border border-gray-300 rounded-full hover:shadow-md transition-shadow duration-200">
-                <input
-                  type="text"
-                  placeholder="Search teachers, subjects, or locations..."
-                  className="flex-1 px-6 py-3 rounded-l-full focus:outline-none"
-                />
-                <button className="bg-coral-500 text-white p-3 rounded-r-full hover:bg-coral-600 transition-colors duration-200">
-                  <Search className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Spacer */}
+          <div className="flex-1"></div>
 
-          {/* Right Navigation */}
-          <div className="flex items-center space-x-4">
+          {/* Right Navigation - fixed to right */}
+          <div className="w-auto flex items-center space-x-4 px-8 border-l border-gray-200">
             <button className="hidden md:flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-coral-500 transition-colors duration-200">
               <Globe className="h-4 w-4 mr-1" />
               EN
             </button>
 
-            <button 
-              onClick={() => setIsMessageCenterOpen(true)}
-              className="relative text-gray-700 hover:text-coral-500 transition-colors duration-200"
-            >
-              <MessageCircle className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </span>
-              )}
-            </button>
+            {isAuthenticated && (
+              <>
+                <button 
+                  onClick={() => setIsMessageCenterOpen(true)}
+                  className="relative text-gray-700 hover:text-coral-500 transition-colors duration-200"
+                >
+                  <MessageCircle className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </button>
 
-            <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
-              <Bell className="h-5 w-5" />
-            </button>
+                <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
+                  <Bell className="h-5 w-5" />
+                </button>
 
-            <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
-              <Heart className="h-5 w-5" />
-            </button>
+                <button className="text-gray-700 hover:text-coral-500 transition-colors duration-200">
+                  <Heart className="h-5 w-5" />
+                </button>
+              </>
+            )}
 
             {/* User Menu Component */}
             <UserMenu onNavigate={onNavigate} />
@@ -91,22 +80,6 @@ const Header = ({ onNavigate }: HeaderProps) => {
             >
               <Menu className="h-6 w-6" />
             </button>
-          </div>
-        </div>
-
-        {/* Mobile Search */}
-        <div className="md:hidden pb-4">
-          <div className="relative">
-            <div className="flex items-center border border-gray-300 rounded-full">
-              <input
-                type="text"
-                placeholder="Search teachers..."
-                className="flex-1 px-4 py-2 rounded-l-full focus:outline-none"
-              />
-              <button className="bg-coral-500 text-white p-2 rounded-r-full hover:bg-coral-600 transition-colors duration-200">
-                <Search className="h-4 w-4" />
-              </button>
-            </div>
           </div>
         </div>
       </div>
