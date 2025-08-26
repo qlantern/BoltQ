@@ -41,12 +41,13 @@ interface DaySchedule {
 const SchedulingSystem: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'day' | 'week' | 'month'>('week');
-  const [showNewEventModal, setShowNewEventModal] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<{ date: Date; time: string } | null>(null);
+  const [availabilityToggle, setAvailabilityToggle] = useState<Map<string, boolean>>(new Map());
+  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  // Enhanced mock schedule data with color-coded statuses
+  // Enhanced mock schedule data with more comprehensive examples
   const schedule: DaySchedule[] = [
     {
       date: new Date(2024, 0, 22), // Today
@@ -135,6 +136,50 @@ const SchedulingSystem: React.FC = () => {
           location: 'Downtown Office, Conference Room A'
         }
       ]
+    },
+    {
+      date: new Date(2024, 0, 24), // Day after tomorrow
+      slots: [
+        {
+          id: '7',
+          time: '09:00',
+          duration: 60,
+          student: {
+            name: 'Emma Thompson',
+            avatar: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'TOEFL Preparation',
+          type: 'online',
+          status: 'upcoming',
+          meetingLink: 'https://zoom.us/j/111222333'
+        },
+        {
+          id: '8',
+          time: '13:00',
+          duration: 60,
+          student: {
+            name: 'Robert Kim',
+            avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Interview Preparation',
+          type: 'offline',
+          status: 'approved',
+          location: 'City Center, Meeting Room B'
+        },
+        {
+          id: '9',
+          time: '17:00',
+          duration: 90,
+          student: {
+            name: 'Anna Rodriguez',
+            avatar: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Advanced Grammar',
+          type: 'online',
+          status: 'finished',
+          meetingLink: 'https://zoom.us/j/444555666'
+        }
+      ]
     }
   ];
 
@@ -173,22 +218,47 @@ const SchedulingSystem: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-red-100 text-red-800 border-red-200';
+      case 'pending': return 'bg-red-100 text-red-800 border-red-300';
       case 'approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'upcoming': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'finished': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'available': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'upcoming': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'finished': return 'bg-gray-100 text-gray-700 border-gray-300';
+      case 'available': return 'bg-blue-100 text-blue-800 border-blue-300';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const handleSlotClick = (date: Date, time: string, slot?: TimeSlot) => {
-    if (slot) {
-      setSelectedSlot(slot);
+    const slotKey = `${date.toDateString()}-${time}`;
+    
+    if (clickTimeout) {
+      // Double click - open modal
+      clearTimeout(clickTimeout);
+      setClickTimeout(null);
+      
+      if (slot) {
+        setSelectedSlot(slot);
+      } else {
+        setSelectedDateTime({ date, time });
+      }
+      setShowScheduleModal(true);
     } else {
-      setSelectedDateTime({ date, time });
+      // Single click - toggle availability (only for empty slots)
+      if (!slot) {
+        const timeout = setTimeout(() => {
+          setAvailabilityToggle(prev => {
+            const newMap = new Map(prev);
+            newMap.set(slotKey, !newMap.get(slotKey));
+            return newMap;
+          });
+          setClickTimeout(null);
+        }, 300);
+        setClickTimeout(timeout);
+      } else {
+        // For existing slots, single click opens modal
+        setSelectedSlot(slot);
+        setShowScheduleModal(true);
+      }
     }
-    setShowScheduleModal(true);
   };
 
   const navigateWeek = (direction: 'prev' | 'next') => {
@@ -305,11 +375,15 @@ const SchedulingSystem: React.FC = () => {
                 </div>
                 {weekDays.map((day, dayIndex) => {
                   const slot = getSlotForDateTime(day, time);
+                  const slotKey = `${day.toDateString()}-${time}`;
+                  const isAvailable = availabilityToggle.get(slotKey) || false;
                   
                   return (
                     <div 
                       key={dayIndex} 
-                      className="p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer hover:bg-gray-50 transition-colors"
+                      className={`p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer transition-colors ${
+                        slot ? 'hover:bg-gray-50' : isAvailable ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
+                      }`}
                       onClick={() => handleSlotClick(day, time, slot)}
                     >
                       {slot ? (
@@ -337,8 +411,16 @@ const SchedulingSystem: React.FC = () => {
                           </div>
                         </div>
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                          <Plus className="h-4 w-4 text-gray-400" />
+                        <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${
+                          isAvailable 
+                            ? 'opacity-100' 
+                            : 'opacity-0 hover:opacity-100'
+                        }`}>
+                          {isAvailable ? (
+                            <div className="text-xs text-blue-600 font-medium">Available</div>
+                          ) : (
+                            <Plus className="h-4 w-4 text-gray-400" />
+                          )}
                         </div>
                       )}
                     </div>
@@ -350,6 +432,41 @@ const SchedulingSystem: React.FC = () => {
         </div>
       )}
 
+      {/* Schedule Legend - Moved below calendar */}
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Legend</h3>
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
+            <span className="text-sm text-gray-700">Pending</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
+            <span className="text-sm text-gray-700">Approved</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded"></div>
+            <span className="text-sm text-gray-700">Upcoming</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div>
+            <span className="text-sm text-gray-700">Finished</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
+            <span className="text-sm text-gray-700">Available</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Plus className="h-4 w-4 text-gray-400" />
+            <span className="text-sm text-gray-700">Click to schedule</span>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>How to use:</strong> Single click empty slots to toggle availability. Double click any slot to open details or schedule a lesson.
+          </p>
+        </div>
+      </div>
       {/* Today's Schedule Summary */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Schedule</h3>
@@ -426,36 +543,6 @@ const SchedulingSystem: React.FC = () => {
         </div>
       </div>
 
-      {/* Schedule Legend - Moved below calendar */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Legend</h3>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-100 border border-red-200 rounded"></div>
-            <span className="text-sm text-gray-700">Pending</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-            <span className="text-sm text-gray-700">Approved</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-yellow-100 border border-yellow-200 rounded"></div>
-            <span className="text-sm text-gray-700">Upcoming</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-gray-100 border border-gray-200 rounded"></div>
-            <span className="text-sm text-gray-700">Finished</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Plus className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-700">Click to schedule</span>
-          </div>
-        </div>
-        <p className="text-sm text-gray-600 mt-3">
-          Click on any time slot to view details or schedule a new lesson. 
-          Available hours: 7:00 AM - 10:00 PM
-        </p>
-      </div>
 
       {/* Booking Settings */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">

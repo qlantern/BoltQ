@@ -87,6 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     ...authState,
+    session: authState.session || null,
     signUp,
     signIn,
     signOut,

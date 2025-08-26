@@ -104,12 +104,16 @@ const UserMenu: React.FC<UserMenuProps> = ({ onNavigate }) => {
               <button 
                 onClick={() => {
                   setIsOpen(false);
-                  onNavigate('bookings');
+                  if (user.role === 'teacher') {
+                    onNavigate('teacher-dashboard');
+                  } else {
+                    onNavigate('bookings');
+                  }
                 }}
                 className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <BookOpen className="h-4 w-4 mr-3" />
-                My Bookings
+                {user.role === 'teacher' ? 'Dashboard' : 'My Bookings'}
               </button>
 
               <button 

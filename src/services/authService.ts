@@ -193,7 +193,7 @@ class AuthService {
     this.emit('auth:stateChange', { 
       user: userWithoutSensitive, 
       isAuthenticated: true,
-      session 
+      session
     });
 
     return { user: userWithoutSensitive, error: null };
@@ -314,7 +314,7 @@ class AuthService {
     this.emit('auth:stateChange', { 
       user: null, 
       isAuthenticated: false,
-      session: null 
+      session: null
     });
   }
 
@@ -363,7 +363,7 @@ class AuthService {
     this.emit('auth:stateChange', { 
       user: updatedUser, 
       isAuthenticated: true,
-      session: this.currentSession 
+      session: this.currentSession
     });
 
     return { user: updatedUser, error: null };

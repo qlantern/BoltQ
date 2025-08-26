@@ -24,6 +24,14 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
 
   const handleBookingClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Check authentication for booking
+    if (!user) {
+      // Redirect to sign in if not authenticated
+      alert('Please sign in to book a lesson');
+      return;
+    }
+    
     if (onBookingClick) {
       onBookingClick(teacher);
     } else {
@@ -33,6 +41,13 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
 
   const handleMessageClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+    // Check authentication for messaging
+    if (!user) {
+      alert('Please sign in to send messages');
+      return;
+    }
+    
     try {
       await startConversation(
         teacher.id,

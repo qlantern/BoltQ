@@ -87,7 +87,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-gray-700 hover:text-coral-500 transition-colors duration-200"
@@ -100,7 +100,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800">
+        <div className="lg:hidden border-t border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800">
           <div className="px-4 py-2 space-y-1">
             <button 
               onClick={() => onNavigate('search')}
@@ -108,7 +108,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
             >
               {t('common.findTeachers')}
             </button>
-            {!isAuthenticated && (
+            {!isAuthenticated ? (
               <>
                 <button 
                   onClick={() => onNavigate('become-teacher')}
@@ -128,6 +128,25 @@ const Header = ({ onNavigate }: HeaderProps) => {
                 >
                   {t('common.logIn')}
                 </button>
+              </>
+            ) : (
+              <>
+                {user?.role === 'student' && (
+                  <button 
+                    onClick={() => onNavigate('become-teacher')}
+                    className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400"
+                  >
+                    {t('common.becomeTeacher')}
+                  </button>
+                )}
+                {user?.role === 'teacher' && (
+                  <button 
+                    onClick={() => onNavigate('teacher-dashboard')}
+                    className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400"
+                  >
+                    Teacher Dashboard
+                  </button>
+                )}
               </>
             )}
             <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400">

@@ -14,6 +14,7 @@ export interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  session?: Session | null;
   session: Session | null;
 }
 

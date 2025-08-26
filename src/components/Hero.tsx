@@ -1,7 +1,15 @@
 import React from 'react';
 import { Search, Star, Users, BookOpen, Award } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
-const Hero = () => {
+interface HeroProps {
+  onSearchClick?: () => void;
+  onBecomeTeacherClick?: () => void;
+}
+
+const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
+  const { user, isAuthenticated } = useAuth();
+
   return (
     <div className="relative bg-gradient-to-br from-coral-500 via-coral-400 to-orange-400">
       <div className="absolute inset-0 bg-black opacity-10"></div>

@@ -88,9 +88,23 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
   ];
 
   const languageOptions = [
-    'English (Native)', 'English (Fluent)', 'Arabic (Native)', 'Arabic (Fluent)',
-    'French (Native)', 'French (Fluent)', 'Spanish (Fluent)', 'German (Fluent)',
-    'Italian (Fluent)', 'Portuguese (Fluent)', 'Mandarin (Fluent)', 'Japanese (Fluent)'
+    { language: 'English', fluency: 'Native' },
+    { language: 'English', fluency: 'Fluent' },
+    { language: 'English', fluency: 'Intermediate' },
+    { language: 'Arabic', fluency: 'Native' },
+    { language: 'Arabic', fluency: 'Fluent' },
+    { language: 'Arabic', fluency: 'Intermediate' },
+    { language: 'French', fluency: 'Native' },
+    { language: 'French', fluency: 'Fluent' },
+    { language: 'French', fluency: 'Intermediate' },
+    { language: 'Spanish', fluency: 'Fluent' },
+    { language: 'Spanish', fluency: 'Intermediate' },
+    { language: 'German', fluency: 'Fluent' },
+    { language: 'German', fluency: 'Intermediate' },
+    { language: 'Italian', fluency: 'Fluent' },
+    { language: 'Portuguese', fluency: 'Fluent' },
+    { language: 'Mandarin', fluency: 'Fluent' },
+    { language: 'Japanese', fluency: 'Fluent' }
   ];
 
   const certificationOptions = [
@@ -404,18 +418,21 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
             <Globe className="h-4 w-4 mr-1" />
-            Languages * (Select all that apply)
+            Languages & Fluency * (Select all that apply)
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {languageOptions.map(language => (
-              <label key={language} className="flex items-center">
+              <label key={`${language.language}-${language.fluency}`} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
                 <input
                   type="checkbox"
-                  checked={applicationData.languages.includes(language)}
-                  onChange={() => handleArrayToggle('languages', language)}
+                  checked={applicationData.languages.includes(`${language.language} (${language.fluency})`)}
+                  onChange={() => handleArrayToggle('languages', `${language.language} (${language.fluency})`)}
                   className="mr-2 rounded border-gray-300 text-coral-500 focus:ring-coral-500"
                 />
-                <span className="text-sm text-gray-700">{language}</span>
+                <div className="flex-1">
+                  <span className="text-sm font-medium text-gray-900">{language.language}</span>
+                  <span className="text-xs text-gray-600 block">{language.fluency} level</span>
+                </div>
               </label>
             ))}
           </div>

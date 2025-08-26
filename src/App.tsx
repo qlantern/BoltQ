@@ -11,13 +11,16 @@ import BecomeTeacherPage from './components/BecomeTeacherPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import TeacherDashboard from './components/teacher/TeacherDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 import { adminService } from './services/adminService';
+import { useAuth } from './contexts/AuthContext';
 
 type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard' | 'teacher-dashboard';
 
 function App() {
+  const { user, isAuthenticated } = useAuth();
   const [currentView, setCurrentView] = useState<AppView>('home');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   const [favoritedTeachers, setFavoritedTeachers] = useState<Set<string>>(new Set());
@@ -74,15 +77,38 @@ function App() {
     <AuthProvider>
       {/* Auth pages */}
       {currentView === 'signup' && (
-        <SignUpPage onNavigate={handleNavigate} />
+        <ProtectedRoute requireGuest onRedirect={handleNavigate}>
+          <SignUpPage onNavigate={handleNavigate} />
+        </ProtectedRoute>
       )}
 
       {currentView === 'signin' && (
-        <SignInPage onNavigate={handleNavigate} />
+        <ProtectedRoute requireGuest onRedirect={handleNavigate}>
+          <SignInPage onNavigate={handleNavigate} />
+        </ProtectedRoute>
       )}
 
       {currentView === 'become-teacher' && (
-        <BecomeTeacherPage onNavigate={handleNavigate} />
+        <ProtectedRoute 
+          requireAuth 
+          onRedirect={handleNavigate}
+          fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Authentication Required</h2>
+                <p className="text-gray-600 mb-6">Please sign in to apply as a teacher.</p>
+                <button 
+                  onClick={() => handleNavigate('signin')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          }
+        >
+          <BecomeTeacherPage onNavigate={handleNavigate} />
+        </ProtectedRoute>
       )}
 
       {/* Admin pages */}
@@ -95,7 +121,41 @@ function App() {
       )}
 
       {currentView === 'teacher-dashboard' && (
-        <TeacherDashboard />
+        <ProtectedRoute 
+          requireAuth 
+          onRedirect={handleNavigate}
+          fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Teacher Access Required</h2>
+                <p className="text-gray-600 mb-6">Please sign in with a teacher account to access the dashboard.</p>
+                <button 
+                  onClick={() => handleNavigate('signin')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          }
+        >
+          {user?.role === 'teacher' ? (
+            <TeacherDashboard />
+          ) : (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Teacher Account Required</h2>
+                <p className="text-gray-600 mb-6">This dashboard is only available for teacher accounts.</p>
+                <button 
+                  onClick={() => handleNavigate('become-teacher')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Apply to Become a Teacher
+                </button>
+              </div>
+            </div>
+          )}
+        </ProtectedRoute>
       )}
 
       {currentView === 'profile' && selectedTeacher && (
@@ -120,8 +180,11 @@ function App() {
           <Header onNavigate={setCurrentView} />
           
           {/* Hero Section */}
-          <div onClick={handleSearchTeachers} className="cursor-pointer">
-            <Hero />
+          <div className="cursor-pointer">
+            <Hero 
+              onSearchClick={handleSearchTeachers}
+              onBecomeTeacherClick={() => setCurrentView('become-teacher')}
+            />
           </div>
 
           {/* Featured Teachers Section */}
@@ -223,7 +286,13 @@ function App() {
                   Find a Teacher
                 </button>
                 <button 
-                  onClick={() => setCurrentView('become-teacher')}
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setCurrentView('become-teacher');
+                    } else {
+                      setCurrentView('signin');
+                    }
+                  }}
                   className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-coral-500 font-semibold transition-colors duration-200"
                 >
                   Become a Teacher
@@ -256,21 +325,29 @@ function App() {
                   <ul className="space-y-2 text-gray-400">
                     <li>
                       <button 
-                        onClick={() => setCurrentView('become-teacher')}
+                        onClick={() => {
+                          if (isAuthenticated) {
+                            setCurrentView('become-teacher');
+                          } else {
+                            setCurrentView('signin');
+                          }
+                        }}
                         className="hover:text-white text-left"
                       >
                         Become a Teacher
                       </button>
                     </li>
                     <li><a href="#" className="hover:text-white">Teacher Resources</a></li>
-                    <li>
+                    {isAuthenticated && user?.role === 'teacher' && (
+                      <li>
                       <button 
                         onClick={() => setCurrentView('teacher-dashboard')}
                         className="hover:text-white text-left"
                       >
                         Teacher Dashboard
                       </button>
-                    </li>
+                      </li>
+                    )}
                     <li><a href="#" className="hover:text-white">Community</a></li>
                     <li><a href="#" className="hover:text-white">Support</a></li>
                   </ul>
