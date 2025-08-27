@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import TeacherCard from './components/TeacherCard';
+import FeaturedTeachersCarousel from './components/FeaturedTeachersCarousel';
 import SearchResults from './components/SearchResults';
 import TeacherProfile from './components/TeacherProfile';
 import SignUpPage from './components/SignUpPage';
@@ -110,24 +111,39 @@ function AppContent() {
       {currentView === 'admin-dashboard' && (
         <ProtectedRoute
           requireAuth
-          role="admin"
+          // role protection for admin
           onRedirect={handleNavigate}
           fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Admin Access Required</h2>
-            <p className="text-gray-600 mb-6">Please sign in as an administrator to access this page.</p>
-            <button 
-          onClick={() => handleNavigate('admin-login')}
-          className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
-            >
-          Admin Login
-            </button>
-          </div>
-        </div>
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Admin Access Required</h2>
+                <p className="text-gray-600 mb-6">Please sign in as an administrator to access this page.</p>
+                <button 
+                  onClick={() => handleNavigate('admin-login')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Admin Login
+                </button>
+              </div>
+            </div>
           }
         >
-          <AdminDashboard onNavigate={handleNavigate} onLogout={handleAdminLogout} />
+          {user?.role === 'admin' ? (
+            <AdminDashboard onNavigate={handleNavigate} onLogout={handleAdminLogout} />
+          ) : (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Admin Account Required</h2>
+                <p className="text-gray-600 mb-6">This dashboard is only available for admin accounts.</p>
+                <button 
+                  onClick={() => handleNavigate('admin-login')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Admin Login
+                </button>
+              </div>
+            </div>
+          )}
         </ProtectedRoute>
       )}
 
@@ -212,16 +228,13 @@ function AppContent() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {mockTeachers.map(teacher => (
-                  <div key={teacher.id} onClick={() => handleTeacherSelect(teacher)}>
-                    <TeacherCard
-                      teacher={teacher}
-                      onFavorite={handleFavorite}
-                      isFavorited={favoritedTeachers.has(teacher.id)}
-                    />
-                  </div>
-                ))}
+              <div className="mt-8">
+                <FeaturedTeachersCarousel
+                  teachers={mockTeachers}
+                  onTeacherSelect={handleTeacherSelect}
+                  onFavorite={handleFavorite}
+                  favoritedTeachers={favoritedTeachers}
+                />
               </div>
 
               <div className="text-center mt-12">
@@ -401,3 +414,8 @@ function App() {
 }
 
 export default App;
+
+export interface AdminDashboardProps {
+  onNavigate: (view: string) => void;
+  onLogout?: () => Promise<void>;
+}

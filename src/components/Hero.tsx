@@ -8,7 +8,6 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
 	// const { user, isAuthenticated } = useAuth();
-
 	return (
 		<div className="relative bg-gradient-to-br from-coral-500 via-coral-400 to-orange-400">
 			<div className="absolute inset-0 bg-black opacity-10"></div>
@@ -81,3 +80,5 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
 		</div>
 	);
 };
+
+export default Hero;
