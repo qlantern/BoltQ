@@ -65,19 +65,19 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
           <div className="space-y-3">
             <label className="flex items-center">
               <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Under 2,000 DZD</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">Under 1,000 DZD</span>
             </label>
             <label className="flex items-center">
               <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
-              <span className="text-sm text-gray-700 dark:text-gray-300">2,000 - 3,500 DZD</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">1,000 - 1,500 DZD</span>
             </label>
             <label className="flex items-center">
               <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
-              <span className="text-sm text-gray-700 dark:text-gray-300">3,500 - 5,000 DZD</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">1,500 - 2,000 DZD</span>
             </label>
             <label className="flex items-center">
               <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Over 5,000 DZD</span>
+              <span className="text-sm text-gray-700 dark:text-gray-300">Over 2,000 DZD</span>
             </label>
           </div>
         </FilterSection>

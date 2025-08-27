@@ -207,7 +207,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                           <h4 className="font-semibold text-blue-800">Online Classes</h4>
                         </div>
                         <p className="text-blue-700 text-sm">
-                          Interactive video lessons from the comfort of your home. Perfect for flexible scheduling and students from anywhere.
+                          Interactive video lessons from the comfort of your home. Perfect for flexible scheduling across Algeria.
                         </p>
                       </div>
                     )}
@@ -218,7 +218,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                           <h4 className="font-semibold text-green-800">Offline Classes</h4>
                         </div>
                         <p className="text-green-700 text-sm">
-                          Face-to-face lessons in {teacher.location}. Ideal for personalized attention and hands-on learning experience.
+                          Face-to-face lessons in {teacher.location}. Ideal for personalized attention and local learning experience.
                         </p>
                       </div>
                     )}

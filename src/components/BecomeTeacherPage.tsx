@@ -21,7 +21,6 @@ interface TeacherApplicationData {
   // Step 2: Professional Information
   summary: string;
   experience: number;
-  hourlyRate: number;
   specialties: string[];
   languages: string[];
   classTypes: {
@@ -32,8 +31,12 @@ interface TeacherApplicationData {
   // Step 3: Documents & Credentials
   cv: File | null;
   profilePhoto: File | null;
-  education: Array<{ degree: string; institution: string; year: string; }>;
-  certifications: string[];
+  education: Array<{ 
+    degree: string; 
+    institution: string; 
+    year: string; 
+    certification?: string;
+  }>;
   
   // Step 4: Social Media & Demo Video
   demoVideoUrl: string;
@@ -41,7 +44,9 @@ interface TeacherApplicationData {
     linkedin: string;
     facebook: string;
     instagram: string;
-    twitter: string;
+    x: string;
+    tiktok: string;
+    custom: Array<{ platform: string; url: string; }>;
   };
 }
 
@@ -61,7 +66,6 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     },
     summary: '',
     experience: 0,
-    hourlyRate: 1000,
     specialties: [],
     languages: [],
     classTypes: {
@@ -71,13 +75,14 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     cv: null,
     profilePhoto: null,
     education: [],
-    certifications: [],
     demoVideoUrl: '',
     socialMedia: {
       linkedin: '',
       facebook: '',
       instagram: '',
-      twitter: ''
+      x: '',
+      tiktok: '',
+      custom: []
     }
   });
 
@@ -87,24 +92,17 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     'Test Preparation', 'Interview Preparation', 'Travel English'
   ];
 
-  const languageOptions = [
-    { language: 'English', fluency: 'Native' },
-    { language: 'English', fluency: 'Fluent' },
-    { language: 'English', fluency: 'Intermediate' },
-    { language: 'Arabic', fluency: 'Native' },
-    { language: 'Arabic', fluency: 'Fluent' },
-    { language: 'Arabic', fluency: 'Intermediate' },
-    { language: 'French', fluency: 'Native' },
-    { language: 'French', fluency: 'Fluent' },
-    { language: 'French', fluency: 'Intermediate' },
-    { language: 'Spanish', fluency: 'Fluent' },
-    { language: 'Spanish', fluency: 'Intermediate' },
-    { language: 'German', fluency: 'Fluent' },
-    { language: 'German', fluency: 'Intermediate' },
-    { language: 'Italian', fluency: 'Fluent' },
-    { language: 'Portuguese', fluency: 'Fluent' },
-    { language: 'Mandarin', fluency: 'Fluent' },
-    { language: 'Japanese', fluency: 'Fluent' }
+  const availableLanguages = [
+    'Arabic', 'English', 'French', 'Spanish', 'German', 'Italian', 
+    'Portuguese', 'Mandarin', 'Japanese', 'Korean', 'Russian', 'Turkish'
+  ];
+
+  const fluencyLevels = [
+    { value: 'native', label: 'Native', description: 'Mother tongue' },
+    { value: 'fluent', label: 'Fluent', description: 'Near-native proficiency' },
+    { value: 'advanced', label: 'Advanced', description: 'High proficiency' },
+    { value: 'intermediate', label: 'Intermediate', description: 'Good working knowledge' },
+    { value: 'beginner', label: 'Beginner', description: 'Basic knowledge' }
   ];
 
   const certificationOptions = [
@@ -112,6 +110,10 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     'IELTS Teaching Certificate', 'TOEFL Teaching Certificate', 'Trinity CertTESOL',
     'Delta (Diploma in Teaching English)', 'MA in Applied Linguistics', 'PhD in English Literature'
   ];
+
+  const [selectedLanguages, setSelectedLanguages] = useState<Array<{ language: string; fluency: string; }>>([]);
+  const [customSocialPlatform, setCustomSocialPlatform] = useState('');
+  const [customSocialUrl, setCustomSocialUrl] = useState('');
 
   const handleInputChange = (field: string, value: any) => {
     if (field.includes('.')) {
@@ -128,7 +130,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     }
   };
 
-  const handleArrayToggle = (field: 'specialties' | 'languages' | 'certifications', value: string) => {
+  const handleArrayToggle = (field: 'specialties', value: string) => {
     setApplicationData(prev => ({
       ...prev,
       [field]: prev[field].includes(value)
@@ -144,7 +146,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
   const addEducation = () => {
     setApplicationData(prev => ({
       ...prev,
-      education: [...prev.education, { degree: '', institution: '', year: '' }]
+      education: [...prev.education, { degree: '', institution: '', year: '', certification: '' }]
     }));
   };
 
@@ -164,6 +166,50 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     }));
   };
 
+  const addLanguage = (language: string, fluency: string) => {
+    const languageString = `${language} (${fluency})`;
+    if (!applicationData.languages.includes(languageString)) {
+      setApplicationData(prev => ({
+        ...prev,
+        languages: [...prev.languages, languageString]
+      }));
+    }
+  };
+
+  const removeLanguage = (languageToRemove: string) => {
+    setApplicationData(prev => ({
+      ...prev,
+      languages: prev.languages.filter(lang => lang !== languageToRemove)
+    }));
+  };
+
+  const addCustomSocialMedia = () => {
+    if (customSocialPlatform.trim() && customSocialUrl.trim()) {
+      setApplicationData(prev => ({
+        ...prev,
+        socialMedia: {
+          ...prev.socialMedia,
+          custom: [...prev.socialMedia.custom, { 
+            platform: customSocialPlatform.trim(), 
+            url: customSocialUrl.trim() 
+          }]
+        }
+      }));
+      setCustomSocialPlatform('');
+      setCustomSocialUrl('');
+    }
+  };
+
+  const removeCustomSocialMedia = (index: number) => {
+    setApplicationData(prev => ({
+      ...prev,
+      socialMedia: {
+        ...prev.socialMedia,
+        custom: prev.socialMedia.custom.filter((_, i) => i !== index)
+      }
+    }));
+  };
+
   const isStepValid = (step: number) => {
     switch (step) {
       case 1:
@@ -171,7 +217,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
                applicationData.phone && applicationData.address.street && applicationData.address.city && 
                applicationData.address.country;
       case 2:
-        return applicationData.summary && applicationData.experience > 0 && applicationData.hourlyRate > 0 &&
+        return applicationData.summary && applicationData.experience > 0 &&
                applicationData.specialties.length > 0 && applicationData.languages.length > 0 &&
                (applicationData.classTypes.online || applicationData.classTypes.offline);
       case 3:
@@ -180,6 +226,13 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
         return true; // Optional step
       default:
         return false;
+    }
+  };
+
+  const handleStepClick = (step: number) => {
+    // Allow navigation to any step that has been completed or is the next step
+    if (step <= currentStep || (step === currentStep + 1 && isStepValid(currentStep))) {
+      setCurrentStep(step);
     }
   };
 
@@ -215,13 +268,16 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
       <div className="flex items-center justify-between">
         {[1, 2, 3, 4, 5].map((step) => (
           <div key={step} className="flex items-center">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            <button
+              onClick={() => handleStepClick(step)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
               step < currentStep ? 'bg-coral-500 text-white' :
               step === currentStep ? 'bg-coral-500 text-white' :
-              'bg-gray-200 text-gray-600'
-            }`}>
+              'bg-gray-200 text-gray-600 hover:bg-gray-300'
+            } ${step <= currentStep || (step === currentStep + 1 && isStepValid(currentStep)) ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+            >
               {step < currentStep ? <Check className="h-4 w-4" /> : step}
-            </div>
+            </button>
             {step < 5 && (
               <div className={`w-16 h-1 mx-2 ${
                 step < currentStep ? 'bg-coral-500' : 'bg-gray-200'
@@ -299,7 +355,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
             value={applicationData.phone}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-            placeholder="+213 123 456 789"
+            placeholder="+213 555 123 456"
           />
         </div>
       </div>
@@ -323,14 +379,14 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               value={applicationData.address.city}
               onChange={(e) => handleInputChange('address.city', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-              placeholder="City"
+              placeholder="Algiers, Oran, Constantine..."
             />
             <input
               type="text"
               value={applicationData.address.country}
               onChange={(e) => handleInputChange('address.country', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-              placeholder="Country"
+              placeholder="Algeria"
             />
           </div>
         </div>
@@ -377,23 +433,6 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               ))}
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-              <DollarSign className="h-4 w-4 mr-1" />
-              Hourly Rate (DZD) *
-            </label>
-            <select
-              value={applicationData.hourlyRate}
-              onChange={(e) => handleInputChange('hourlyRate', parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-            >
-              <option value={500}>500 DZD/hour</option>
-              <option value={1000}>1,000 DZD/hour</option>
-              <option value={1500}>1,500 DZD/hour</option>
-              <option value={2000}>2,000 DZD/hour</option>
-              <option value={3000}>3,000+ DZD/hour</option>
-            </select>
-          </div>
         </div>
 
         <div className="mb-6">
@@ -418,23 +457,84 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
             <Globe className="h-4 w-4 mr-1" />
-            Languages & Fluency * (Select all that apply)
+            Languages & Fluency *
           </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {languageOptions.map(language => (
-              <label key={`${language.language}-${language.fluency}`} className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-                <input
-                  type="checkbox"
-                  checked={applicationData.languages.includes(`${language.language} (${language.fluency})`)}
-                  onChange={() => handleArrayToggle('languages', `${language.language} (${language.fluency})`)}
-                  className="mr-2 rounded border-gray-300 text-coral-500 focus:ring-coral-500"
-                />
-                <div className="flex-1">
-                  <span className="text-sm font-medium text-gray-900">{language.language}</span>
-                  <span className="text-xs text-gray-600 block">{language.fluency} level</span>
+          
+          {/* Language Selection Interface */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+                <select
+                  value={selectedLanguages[0]?.language || ''}
+                  onChange={(e) => {
+                    const newLang = { language: e.target.value, fluency: selectedLanguages[0]?.fluency || 'intermediate' };
+                    setSelectedLanguages([newLang]);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+                >
+                  <option value="">Select language</option>
+                  {availableLanguages.map(lang => (
+                    <option key={lang} value={lang}>{lang}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Fluency Level</label>
+                <select
+                  value={selectedLanguages[0]?.fluency || ''}
+                  onChange={(e) => {
+                    const newLang = { language: selectedLanguages[0]?.language || '', fluency: e.target.value };
+                    setSelectedLanguages([newLang]);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+                >
+                  <option value="">Select fluency</option>
+                  {fluencyLevels.map(level => (
+                    <option key={level.value} value={level.value}>
+                      {level.label} - {level.description}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => {
+                if (selectedLanguages[0]?.language && selectedLanguages[0]?.fluency) {
+                  addLanguage(selectedLanguages[0].language, selectedLanguages[0].fluency);
+                  setSelectedLanguages([]);
+                }
+              }}
+              disabled={!selectedLanguages[0]?.language || !selectedLanguages[0]?.fluency}
+              className="w-full px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Add Language
+            </button>
+
+            {/* Selected Languages Display */}
+            {applicationData.languages.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-700">Selected Languages:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {applicationData.languages.map((language, index) => (
+                    <span
+                      key={index}
+                      className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm flex items-center"
+                    >
+                      {language}
+                      <button
+                        onClick={() => removeLanguage(language)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
                 </div>
-              </label>
-            ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -452,7 +552,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               />
               <div>
                 <span className="font-medium text-gray-900">Online Classes</span>
-                <p className="text-sm text-gray-600">Teach students via video calls from anywhere</p>
+                <p className="text-sm text-gray-600">Teach Algerian students via video calls</p>
               </div>
             </label>
             <label className="flex items-center">
@@ -464,7 +564,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               />
               <div>
                 <span className="font-medium text-gray-900">Offline Classes</span>
-                <p className="text-sm text-gray-600">In-person lessons in your local area</p>
+                <p className="text-sm text-gray-600">In-person lessons in your Algerian city</p>
               </div>
             </label>
           </div>
@@ -552,7 +652,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
                 <input
                   type="text"
                   value={edu.degree}
@@ -567,6 +667,8 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
                   placeholder="Institution"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
                 />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <input
                   type="text"
                   value={edu.year}
@@ -574,30 +676,19 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
                   placeholder="Year"
                   className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
                 />
+                <select
+                  value={edu.certification || ''}
+                  onChange={(e) => updateEducation(index, 'certification', e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+                >
+                  <option value="">Select certification (optional)</option>
+                  {certificationOptions.map(cert => (
+                    <option key={cert} value={cert}>{cert}</option>
+                  ))}
+                </select>
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Certifications */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center">
-            <Award className="h-4 w-4 mr-1" />
-            Teaching Certifications (Select all that apply)
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {certificationOptions.map(cert => (
-              <label key={cert} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={applicationData.certifications.includes(cert)}
-                  onChange={() => handleArrayToggle('certifications', cert)}
-                  className="mr-2 rounded border-gray-300 text-coral-500 focus:ring-coral-500"
-                />
-                <span className="text-sm text-gray-700">{cert}</span>
-              </label>
-            ))}
-          </div>
         </div>
       </div>
     </div>
@@ -607,7 +698,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Youtube className="h-5 w-5 mr-2 text-coral-500" />
+          <Globe className="h-5 w-5 mr-2 text-coral-500" />
           Social Media & Demo Video
         </h3>
         <p className="text-sm text-gray-600 mb-6">
@@ -638,7 +729,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                <Linkedin className="h-4 w-4 mr-1 text-blue-600" />
+                <svg className="h-4 w-4 mr-1 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
                 LinkedIn
               </label>
               <input
@@ -652,7 +743,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                <Facebook className="h-4 w-4 mr-1 text-blue-600" />
+                <svg className="h-4 w-4 mr-1 text-blue-600" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 Facebook
               </label>
               <input
@@ -666,7 +757,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                <Instagram className="h-4 w-4 mr-1 text-pink-600" />
+                <svg className="h-4 w-4 mr-1 text-pink-600" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                 Instagram
               </label>
               <input
@@ -680,17 +771,82 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                <Twitter className="h-4 w-4 mr-1 text-blue-400" />
-                Twitter
+                <svg className="h-4 w-4 mr-1 text-gray-900" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                X (Twitter)
               </label>
               <input
                 type="url"
-                value={applicationData.socialMedia.twitter}
-                onChange={(e) => handleInputChange('socialMedia.twitter', e.target.value)}
+                value={applicationData.socialMedia.x}
+                onChange={(e) => handleInputChange('socialMedia.x', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-                placeholder="https://twitter.com/yourprofile"
+                placeholder="https://x.com/yourprofile"
               />
             </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                <svg className="h-4 w-4 mr-1 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                TikTok
+              </label>
+              <input
+                type="url"
+                value={applicationData.socialMedia.tiktok}
+                onChange={(e) => handleInputChange('socialMedia.tiktok', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+                placeholder="https://tiktok.com/@yourprofile"
+              />
+            </div>
+          </div>
+
+          {/* Custom Social Media */}
+          <div className="mt-6">
+            <h4 className="font-medium text-gray-900 mb-4">Add Custom Social Media</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+              <input
+                type="text"
+                value={customSocialPlatform}
+                onChange={(e) => setCustomSocialPlatform(e.target.value)}
+                placeholder="Platform name (e.g., YouTube)"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+              />
+              <input
+                type="url"
+                value={customSocialUrl}
+                onChange={(e) => setCustomSocialUrl(e.target.value)}
+                placeholder="Profile URL"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+              />
+              <button
+                type="button"
+                onClick={addCustomSocialMedia}
+                disabled={!customSocialPlatform.trim() || !customSocialUrl.trim()}
+                className="px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add
+              </button>
+            </div>
+
+            {/* Display Custom Social Media */}
+            {applicationData.socialMedia.custom.length > 0 && (
+              <div className="space-y-2">
+                <h5 className="text-sm font-medium text-gray-700">Custom Social Media:</h5>
+                {applicationData.socialMedia.custom.map((social, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <span className="font-medium text-gray-900">{social.platform}</span>
+                      <p className="text-sm text-gray-600">{social.url}</p>
+                    </div>
+                    <button
+                      onClick={() => removeCustomSocialMedia(index)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -712,14 +868,14 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               {applicationData.firstName} {applicationData.lastName} • {applicationData.email} • {applicationData.phone}
             </p>
             <p className="text-sm text-gray-600">
-              {applicationData.address.street}, {applicationData.address.city}, {applicationData.address.country}
+              {applicationData.address.city}, {applicationData.address.country}
             </p>
           </div>
 
           <div>
             <h4 className="font-medium text-gray-900 mb-2">Professional Information</h4>
             <p className="text-sm text-gray-600">
-              {applicationData.experience} years experience • {applicationData.hourlyRate} DZD/hour
+              {applicationData.experience} years experience
             </p>
             <p className="text-sm text-gray-600">
               Specialties: {applicationData.specialties.join(', ')}
@@ -746,24 +902,26 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
             <p className="text-sm text-gray-600">
               Education: {applicationData.education.length} entries
             </p>
-            <p className="text-sm text-gray-600">
-              Certifications: {applicationData.certifications.length} selected
-            </p>
           </div>
 
-          {(applicationData.demoVideoUrl || Object.values(applicationData.socialMedia).some(url => url)) && (
+          {(applicationData.demoVideoUrl || Object.values(applicationData.socialMedia).some(url => url) || applicationData.socialMedia.custom.length > 0) && (
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Social Media & Video</h4>
               {applicationData.demoVideoUrl && (
                 <p className="text-sm text-gray-600">Demo Video: {applicationData.demoVideoUrl}</p>
               )}
-              {Object.entries(applicationData.socialMedia).map(([platform, url]) => 
-                url && (
+              {Object.entries(applicationData.socialMedia).filter(([platform]) => platform !== 'custom').map(([platform, url]) => 
+                url && platform !== 'custom' && (
                   <p key={platform} className="text-sm text-gray-600 capitalize">
-                    {platform}: {url}
+                    {platform === 'x' ? 'X (Twitter)' : platform}: {url}
                   </p>
                 )
               )}
+              {applicationData.socialMedia.custom.map((social, index) => (
+                <p key={index} className="text-sm text-gray-600">
+                  {social.platform}: {social.url}
+                </p>
+              ))}
             </div>
           )}
         </div>
@@ -773,7 +931,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• We'll review your application within 2-3 business days</li>
             <li>• You'll receive an email with the review results</li>
-            <li>• If approved, you can start creating your teacher profile</li>
+            <li>• If approved, you can start teaching students in Algeria</li>
             <li>• Once your profile is complete, students can find and book lessons with you</li>
           </ul>
         </div>
