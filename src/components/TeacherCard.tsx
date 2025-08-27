@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, MapPin, Clock, CheckCircle, Heart } from 'lucide-react';
+import { Star, MapPin, Clock, CheckCircle, Heart, MessageCircle, Calendar } from 'lucide-react';
 import { Teacher } from '../types';
 import { useAuth } from '../contexts/AuthContext';
 import BookingModal from './BookingModal';
@@ -62,24 +62,28 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer relative">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer relative h-[420px] flex flex-col">
         {/* Booking Overlay on Hover */}
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
-          <div className="flex space-x-3">
-            <button
-              onClick={handleMessageClick}
-              className="bg-teal-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-teal-600 transform scale-95 group-hover:scale-100 transition-transform duration-200"
-            >
-              Message
-            </button>
-            <button
-              onClick={handleBookingClick}
-              className="bg-coral-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-coral-600 transform scale-95 group-hover:scale-100 transition-transform duration-200"
-            >
-              Book Lesson
-            </button>
+        {user && (
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
+            <div className="flex space-x-3">
+              <button
+                onClick={handleMessageClick}
+                className="bg-teal-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-teal-600 transform scale-95 group-hover:scale-100 transition-transform duration-200 flex items-center"
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Message
+              </button>
+              <button
+                onClick={handleBookingClick}
+                className="bg-coral-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-coral-600 transform scale-95 group-hover:scale-100 transition-transform duration-200 flex items-center"
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Book Lesson
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="relative">
           <img
@@ -87,7 +91,8 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
             alt={teacher.name}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <button
+          {user?.role === 'student' && onFavorite && (
+            <button
             onClick={(e) => {
               e.stopPropagation();
               onFavorite?.(teacher.id);
@@ -96,6 +101,8 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
           >
             <Heart className={`h-4 w-4 ${isFavorited ? 'fill-coral-500 text-coral-500' : 'text-gray-600 dark:text-gray-300'}`} />
           </button>
+          )}
+          
           {teacher.isOnline && (
             <div className="absolute top-3 left-3 bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center">
               <div className="w-2 h-2 bg-green-300 rounded-full mr-1 animate-pulse"></div>
@@ -104,7 +111,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
           )}
         </div>
 
-        <div className="p-6">
+        <div className="p-6 flex-1 flex flex-col">
           {/* Teacher Info */}
           <div className="flex items-start justify-between mb-3">
             <div>
@@ -129,7 +136,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
           </div>
 
           {/* Specialties */}
-          <div className="mb-4">
+          <div className="mb-4 flex-1">
             <div className="flex flex-wrap gap-2">
               {teacher.specialties.slice(0, 3).map((specialty, index) => (
                 <span
@@ -148,7 +155,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
           </div>
 
           {/* Bio */}
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-2 leading-relaxed">
+          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed flex-1">
             {teacher.bio}
           </p>
 
@@ -164,7 +171,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
           </div>
 
           {/* Bottom Row */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mt-auto">
             <div className="flex flex-col space-y-1">
               <div className="flex items-center text-gray-600 dark:text-gray-300 text-xs">
                 <Clock className="h-3 w-3 mr-1" />
@@ -186,7 +193,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
             <div className="text-right">
               <div className="text-xl font-bold text-gray-900 dark:text-white">
                 {teacher.pricePerHour} DZD
-                <span className="text-sm font-normal text-gray-600 dark:text-gray-300">/hour</span>
+                <span className="text-sm font-normal text-gray-600 dark:text-gray-300">/lesson</span>
               </div>
             </div>
           </div>

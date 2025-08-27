@@ -199,19 +199,20 @@ function AppContent() {
           </div>
 
           {/* Featured Teachers Section */}
-          <section className="py-16 bg-gray-50 dark:bg-gray-800">
+          {!isAuthenticated && (
+            <section className="py-16 bg-gray-50 dark:bg-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                  Featured English Teachers
+                  Featured English Teachers in Algeria
                 </h2>
                 <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                  Discover our top-rated teachers who have helped thousands of students 
+                  Discover our top-rated Algerian teachers who have helped thousands of local students 
                   achieve their English learning goals.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {mockTeachers.map(teacher => (
                   <div key={teacher.id} onClick={() => handleTeacherSelect(teacher)}>
                     <TeacherCard
@@ -233,16 +234,17 @@ function AppContent() {
               </div>
             </div>
           </section>
+          )}
 
           {/* How It Works Section */}
           <section className="py-16 bg-white dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                  How TeachBnB Works
+                  How TeachBnB Works in Algeria
                 </h2>
                 <p className="text-lg text-gray-600 dark:text-gray-300">
-                  Learning English has never been easier
+                  Learning English in Algeria has never been easier
                 </p>
               </div>
 
@@ -253,7 +255,7 @@ function AppContent() {
                   </div>
                   <h3 className="text-xl font-semibold mb-4 dark:text-white">Find Your Teacher</h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Browse through our qualified teachers, read reviews, and find the perfect match for your learning style and goals.
+                    Browse through our qualified Algerian teachers, read reviews, and find the perfect match for your learning style and goals.
                   </p>
                 </div>
 
@@ -263,7 +265,7 @@ function AppContent() {
                   </div>
                   <h3 className="text-xl font-semibold mb-4 dark:text-white">Book Your Lesson</h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Schedule lessons at your convenience. Choose from one-time sessions or ongoing courses to fit your schedule.
+                    Schedule lessons at your convenience in Algeria. Choose from online or in-person sessions to fit your schedule.
                   </p>
                 </div>
 
@@ -273,7 +275,7 @@ function AppContent() {
                   </div>
                   <h3 className="text-xl font-semibold mb-4 dark:text-white">Start Learning</h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Begin your personalized English learning journey with expert guidance and achieve your language goals faster.
+                    Begin your personalized English learning journey with local expert guidance and achieve your language goals faster.
                   </p>
                 </div>
               </div>
@@ -284,10 +286,10 @@ function AppContent() {
           <section className="py-16 bg-gradient-to-r from-coral-500 to-orange-500">
             <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-white mb-4">
-                Ready to Start Your English Learning Journey?
+                Ready to Start Your English Learning Journey in Algeria?
               </h2>
               <p className="text-xl text-white/90 mb-8">
-                Join thousands of students who have improved their English with our expert teachers.
+                Join thousands of Algerian students who have improved their English with our expert local teachers.
               </p>
               <div className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center">
                 <button 
@@ -319,7 +321,7 @@ function AppContent() {
                 <div>
                   <h3 className="text-2xl font-bold mb-4">TeachBnB</h3>
                   <p className="text-gray-400">
-                    Connecting English learners with qualified teachers worldwide.
+                    Connecting English learners with qualified teachers across Algeria.
                   </p>
                 </div>
                 <div>
