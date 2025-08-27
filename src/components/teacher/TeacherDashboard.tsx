@@ -23,7 +23,35 @@ const TeacherDashboard: React.FC = () => {
 
   const navigationItems = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
-// ... existing code ...
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'messages', label: 'Messages', icon: MessageCircle, badge: notifications },
+    { id: 'schedule', label: 'Schedule', icon: Calendar },
+    { id: 'listings', label: 'My Classes', icon: BookOpen },
+    { id: 'settings', label: 'Settings', icon: Settings }
+  ];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <DashboardOverview />;
+      case 'profile':
+        return <ProfileManagement />;
+      case 'messages':
+        return <MessagesSection />;
+      case 'schedule':
+        return <SchedulingSystem />;
+      case 'listings':
+        return <ListingManagement />;
+      case 'settings':
+        return <SettingsSection />;
+      default:
+        return <DashboardOverview />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Top Navigation Bar */}
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -56,3 +84,45 @@ const TeacherDashboard: React.FC = () => {
           </div>
         </div>
       </header>
+
+      <div className="flex">
+        {/* Sidebar Navigation */}
+        <nav className="w-64 bg-white shadow-sm min-h-screen border-r border-gray-200">
+          <div className="p-4">
+            <div className="space-y-2">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as DashboardTab)}
+                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-colors duration-200 ${
+                      activeTab === item.id
+                        ? 'bg-coral-50 text-coral-600 border-r-2 border-coral-500'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5 mr-3" />
+                    <span className="font-medium">{item.label}</span>
+                    {item.badge && item.badge > 0 && (
+                      <span className="ml-auto bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {item.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          
+        </nav>        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto">
+          {renderContent()}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default TeacherDashboard;
