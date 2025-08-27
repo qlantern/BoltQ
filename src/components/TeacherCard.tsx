@@ -62,7 +62,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
 
   return (
     <>
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer relative h-[420px] flex flex-col">
+  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer relative flex flex-col">
         {/* Booking Overlay on Hover */}
         {user && (
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100 z-10">
@@ -89,7 +89,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
           <img
             src={teacher.avatar}
             alt={teacher.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-56 object-cover object-center rounded-t-xl group-hover:scale-105 transition-transform duration-300"
           />
           {user?.role === 'student' && onFavorite && (
             <button
@@ -154,10 +154,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
             </div>
           </div>
 
-          {/* Bio */}
-          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 line-clamp-3 leading-relaxed flex-1">
-            {teacher.bio}
-          </p>
+          {/* Bio removed as requested */}
 
           {/* Languages */}
           <div className="mb-4">
