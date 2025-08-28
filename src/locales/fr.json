@@ -1,0 +1,18 @@
+{
+  "common": {
+    "findTeachers": "Trouver des enseignants",
+    "becomeTeacher": "Devenir enseignant",
+    "signUp": "S'inscrire",
+    "logIn": "Se connecter",
+    "help": "Aide",
+    "notifications": "Notifications",
+    "messages": "Messages",
+    "favorites": "Favoris",
+    "language": "Langue"
+  },
+  "header": {
+    "searchPlaceholder": "Rechercher des enseignants, des matières ou des lieux...",
+    "unreadMessages": "{{count}} messages non lus",
+    "menu": "Menu"
+  }
+}
