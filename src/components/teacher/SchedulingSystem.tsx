@@ -4,16 +4,11 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Plus, 
-  Clock, 
-  User, 
   MapPin,
   Video,
   Edit3,
   Trash2,
-  Copy,
   ExternalLink,
-  Check,
-  X,
   Eye
 } from 'lucide-react';
 import ScheduleDetailsModal from './ScheduleDetailsModal';
@@ -45,7 +40,7 @@ const SchedulingSystem: React.FC = () => {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<{ date: Date; time: string } | null>(null);
   const [availabilityToggle, setAvailabilityToggle] = useState<Map<string, boolean>>(new Map());
-  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [clickTimeout, setClickTimeout] = useState<number | null>(null);
 
   // Enhanced mock schedule data with more comprehensive examples
   const schedule: DaySchedule[] = [
@@ -199,14 +194,6 @@ const SchedulingSystem: React.FC = () => {
       week.push(day);
     }
     return week;
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
   };
 
   const getSlotForDateTime = (date: Date, time: string) => {
