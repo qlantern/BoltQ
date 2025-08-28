@@ -1,0 +1,18 @@
+{
+  "common": {
+    "findTeachers": "البحث عن معلمين",
+    "becomeTeacher": "كن معلماً",
+    "signUp": "تسجيل",
+    "logIn": "تسجيل الدخول",
+    "help": "المساعدة",
+    "notifications": "الإشعارات",
+    "messages": "الرسائل",
+    "favorites": "المفضلة",
+    "language": "اللغة"
+  },
+  "header": {
+    "searchPlaceholder": "ابحث عن معلمين، مواد، أو مواقع...",
+    "unreadMessages": "{{count}} رسائل غير مقروءة",
+    "menu": "القائمة"
+  }
+}
