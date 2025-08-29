@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useMessaging } from '../hooks/useMessaging';
 import UserMenu from './UserMenu';
+import { useFavorites } from '../hooks/useFavorites';
 import MessageCenter from './messaging/MessageCenter';
 import MessageNotifications from './messaging/MessageNotifications';
 import LanguageSelector from './LanguageSelector';
@@ -27,6 +28,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
     notifications, 
     dismissNotification 
   } = useMessaging(currentUserId);
+  const { favorites } = useFavorites(currentUserId);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50 dark:bg-gray-900 dark:border-gray-800">
@@ -72,11 +74,20 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   <Bell className="h-5 w-5" />
                 </button>
 
-                <button 
+                <button
+                  onClick={() => {
+                    // Navigate to favorites page - for now just show count
+                    alert(`You have ${favorites.length} favorite teachers`);
+                  }}
                   className="text-gray-700 hover:text-coral-500 transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400"
                   title={t('common.favorites')}
                 >
                   <Heart className="h-5 w-5" />
+                  {favorites.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                      {favorites.length > 9 ? '9+' : favorites.length}
+                    </span>
+                  )}
                 </button>
               </>
             )}

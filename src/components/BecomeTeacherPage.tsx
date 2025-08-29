@@ -115,6 +115,9 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
   const [customSocialPlatform, setCustomSocialPlatform] = useState('');
   const [customSocialUrl, setCustomSocialUrl] = useState('');
 
+  // Add missing hourlyRate to applicationData
+  const [hourlyRate, setHourlyRate] = useState(1000);
+
   const handleInputChange = (field: string, value: any) => {
     if (field.includes('.')) {
       const [parent, child] = field.split('.');
@@ -433,6 +436,24 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               ))}
             </select>
           </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Hourly Rate (DZD) *
+          </label>
+          <select
+            value={hourlyRate}
+            onChange={(e) => setHourlyRate(parseInt(e.target.value))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+          >
+            <option value={500}>500 DZD/hour</option>
+            <option value={1000}>1,000 DZD/hour</option>
+            <option value={1500}>1,500 DZD/hour</option>
+            <option value={2000}>2,000 DZD/hour</option>
+            <option value={2500}>2,500 DZD/hour</option>
+            <option value={3000}>3,000+ DZD/hour</option>
+          </select>
         </div>
 
         <div className="mb-6">
@@ -948,7 +969,7 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
           email: applicationData.email,
           experience: applicationData.experience,
           specialties: applicationData.specialties,
-          hourlyRate: applicationData.hourlyRate
+          hourlyRate: hourlyRate
         }}
         onBackToHome={handleBackToHomeFromConfirmation}
       />

@@ -4,9 +4,18 @@ import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 interface FilterSidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onFiltersChange?: (filters: FilterState) => void;
 }
 
-const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
+interface FilterState {
+  priceRanges: string[];
+  experienceLevels: string[];
+  specialties: string[];
+  classTypes: string[];
+  ratings: number[];
+}
+
+const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFiltersChange }) => {
   const [openSections, setOpenSections] = useState({
     price: true,
     experience: true,
@@ -14,6 +23,37 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
     availability: true,
     rating: true
   });
+
+  const [filters, setFilters] = useState<FilterState>({
+    priceRanges: [],
+    experienceLevels: [],
+    specialties: [],
+    classTypes: [],
+    ratings: []
+  });
+
+  const handleFilterChange = (category: keyof FilterState, value: string | number, checked: boolean) => {
+    const newFilters = { ...filters };
+    if (checked) {
+      (newFilters[category] as any[]).push(value);
+    } else {
+      newFilters[category] = (newFilters[category] as any[]).filter(item => item !== value);
+    }
+    setFilters(newFilters);
+    onFiltersChange?.(newFilters);
+  };
+
+  const clearAllFilters = () => {
+    const clearedFilters = {
+      priceRanges: [],
+      experienceLevels: [],
+      specialties: [],
+      classTypes: [],
+      ratings: []
+    };
+    setFilters(clearedFilters);
+    onFiltersChange?.(clearedFilters);
+  };
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections(prev => ({
@@ -64,19 +104,39 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
         >
           <div className="space-y-3">
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.priceRanges.includes('under-1000')}
+                onChange={(e) => handleFilterChange('priceRanges', 'under-1000', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Under 1,000 DZD</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.priceRanges.includes('1000-1500')}
+                onChange={(e) => handleFilterChange('priceRanges', '1000-1500', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">1,000 - 1,500 DZD</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.priceRanges.includes('1500-2000')}
+                onChange={(e) => handleFilterChange('priceRanges', '1500-2000', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">1,500 - 2,000 DZD</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.priceRanges.includes('over-2000')}
+                onChange={(e) => handleFilterChange('priceRanges', 'over-2000', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Over 2,000 DZD</span>
             </label>
           </div>
@@ -90,15 +150,30 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
         >
           <div className="space-y-3">
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.experienceLevels.includes('new')}
+                onChange={(e) => handleFilterChange('experienceLevels', 'new', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">New teacher (0-1 years)</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.experienceLevels.includes('experienced')}
+                onChange={(e) => handleFilterChange('experienceLevels', 'experienced', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Experienced (2-5 years)</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.experienceLevels.includes('expert')}
+                onChange={(e) => handleFilterChange('experienceLevels', 'expert', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Expert (6+ years)</span>
             </label>
           </div>
@@ -124,7 +199,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
               'Test Preparation'
             ].map((specialty) => (
               <label key={specialty} className="flex items-center">
-                <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+                <input 
+                  type="checkbox" 
+                  checked={filters.specialties.includes(specialty)}
+                  onChange={(e) => handleFilterChange('specialties', specialty, e.target.checked)}
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
                 <span className="text-sm text-gray-700 dark:text-gray-300">{specialty}</span>
               </label>
             ))}
@@ -139,19 +219,39 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
         >
           <div className="space-y-3">
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.classTypes.includes('online')}
+                onChange={(e) => handleFilterChange('classTypes', 'online', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Online Classes</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.classTypes.includes('offline')}
+                onChange={(e) => handleFilterChange('classTypes', 'offline', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Offline Classes</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.classTypes.includes('available-now')}
+                onChange={(e) => handleFilterChange('classTypes', 'available-now', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Available now</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+              <input 
+                type="checkbox" 
+                checked={filters.classTypes.includes('available-week')}
+                onChange={(e) => handleFilterChange('classTypes', 'available-week', e.target.checked)}
+                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">Available this week</span>
             </label>
           </div>
@@ -166,7 +266,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
           <div className="space-y-3">
             {[5, 4, 3, 2].map((rating) => (
               <label key={rating} className="flex items-center">
-                <input type="checkbox" className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" />
+                <input 
+                  type="checkbox" 
+                  checked={filters.ratings.includes(rating)}
+                  onChange={(e) => handleFilterChange('ratings', rating, e.target.checked)}
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
                 <span className="text-sm text-gray-700 dark:text-gray-300 flex items-center">
                   {rating}+ stars
                   <div className="flex ml-2">
@@ -184,7 +289,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose }) => {
         </FilterSection>
 
         {/* Clear All Filters */}
-        <button className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200">
+        <button 
+          onClick={clearAllFilters}
+          className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white py-2 px-4 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+        >
           Clear all filters
         </button>
       </div>
