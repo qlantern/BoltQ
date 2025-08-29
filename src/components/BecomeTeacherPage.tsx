@@ -35,7 +35,7 @@ interface TeacherApplicationData {
     degree: string; 
     institution: string; 
     year: string; 
-    certification?: string;
+    document?: File;
   }>;
   
   // Step 4: Social Media & Demo Video

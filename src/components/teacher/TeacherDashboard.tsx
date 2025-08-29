@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   User, 
   MessageCircle, 
@@ -6,8 +7,10 @@ import {
   BookOpen, 
   Settings, 
   Bell, 
-  BarChart3
+  BarChart3,
+  LogOut
 } from 'lucide-react';
+import LanguageSelector from '../LanguageSelector';
 import ProfileManagement from './ProfileManagement';
 import MessagesSection from './MessagesSection';
 import SchedulingSystem from './SchedulingSystem';
@@ -20,6 +23,16 @@ type DashboardTab = 'overview' | 'profile' | 'messages' | 'schedule' | 'listings
 const TeacherDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
   const [notifications] = useState(3);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Sign out failed:', error);
+    }
+  };
 
   const navigationItems = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -84,11 +97,20 @@ const TeacherDashboard: React.FC = () => {
               
               <div className="flex items-center space-x-3">
                 <img
-                  src="https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop"
+                  src={user?.avatar || "https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop"}
                   alt="Teacher"
                   className="w-8 h-8 rounded-full object-cover"
                 />
-                <span className="hidden md:block text-sm font-medium text-gray-700">Sarah Johnson</span>
+                <span className="hidden md:block text-sm font-medium text-gray-700">
+                  {user ? `${user.firstName} ${user.lastName}` : 'Teacher'}
+                </span>
+                <button
+                  onClick={handleSignOut}
+                  className="p-1 text-gray-600 hover:text-red-500 hover:bg-red-50 rounded"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
               </div>
             </div>
           </div>

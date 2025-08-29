@@ -41,6 +41,7 @@ const SchedulingSystem: React.FC = () => {
   const [selectedDateTime, setSelectedDateTime] = useState<{ date: Date; time: string } | null>(null);
   const [availabilityToggle, setAvailabilityToggle] = useState<Map<string, boolean>>(new Map());
   const [clickTimeout, setClickTimeout] = useState<number | null>(null);
+  const [selectedSlots, setSelectedSlots] = useState<Set<string>>(new Set());
 
   // Enhanced mock schedule data with more comprehensive examples
   const schedule: DaySchedule[] = [
@@ -175,6 +176,68 @@ const SchedulingSystem: React.FC = () => {
           meetingLink: 'https://zoom.us/j/444555666'
         }
       ]
+    },
+    {
+      date: new Date(2024, 0, 25), // 3 days from now
+      slots: [
+        {
+          id: '10',
+          time: '10:00',
+          duration: 60,
+          student: {
+            name: 'Sophie Martin',
+            avatar: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Business Presentation',
+          type: 'online',
+          status: 'pending',
+          meetingLink: 'https://zoom.us/j/777888999'
+        },
+        {
+          id: '11',
+          time: '14:00',
+          duration: 90,
+          student: {
+            name: 'Carlos Rodriguez',
+            avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Group Workshop',
+          type: 'offline',
+          status: 'approved',
+          location: 'Language Center, Workshop Room'
+        }
+      ]
+    },
+    {
+      date: new Date(2024, 0, 26), // 4 days from now
+      slots: [
+        {
+          id: '12',
+          time: '11:00',
+          duration: 60,
+          student: {
+            name: 'Alex Thompson',
+            avatar: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Pronunciation Training',
+          type: 'online',
+          status: 'upcoming',
+          meetingLink: 'https://zoom.us/j/123789456'
+        },
+        {
+          id: '13',
+          time: '16:00',
+          duration: 120,
+          student: {
+            name: 'Nina Petrov',
+            avatar: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop'
+          },
+          subject: 'Academic Writing Workshop',
+          type: 'offline',
+          status: 'finished',
+          location: 'University Library, Study Room 3'
+        }
+      ]
     }
   ];
 
@@ -205,13 +268,21 @@ const SchedulingSystem: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-red-100 text-red-800 border-red-300';
-      case 'approved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'upcoming': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'finished': return 'bg-gray-100 text-gray-700 border-gray-300';
-      case 'available': return 'bg-blue-100 text-blue-800 border-blue-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'pending': return 'bg-red-200 text-red-900 border-red-300';
+      case 'approved': return 'bg-green-200 text-green-900 border-green-300';
+      case 'upcoming': return 'bg-yellow-200 text-yellow-900 border-yellow-300';
+      case 'finished': return 'bg-gray-200 text-gray-800 border-gray-300';
+      case 'available': return 'bg-blue-200 text-blue-900 border-blue-300';
+      default: return 'bg-gray-200 text-gray-800 border-gray-300';
     }
+  };
+
+  const handleMouseDown = (date: Date, time: string, slot?: TimeSlot) => {
+    // Start selection for batch operations (future feature)
+  };
+
+  const handleMouseEnter = (date: Date, time: string, slot?: TimeSlot) => {
+    // Handle drag selection (future feature)
   };
 
   const handleSlotClick = (date: Date, time: string, slot?: TimeSlot) => {
@@ -543,213 +614,6 @@ const SchedulingSystem: React.FC = () => {
               Week
             </button>
             <button
-              onClick={() => setViewMode('month')}
-              className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                viewMode === 'month' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-600'
-              }`}
-            >
-              Month
-            </button>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <button className="flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Sync Calendar
-          </button>
-        </div>
-      </div>
-
-      {/* Calendar Navigation */}
-      <div className="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-        <button
-          onClick={handlePrev}
-          className="p-2 hover:bg-gray-100 rounded-lg"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        
-        <h2 className="text-lg font-semibold text-gray-900">
-          {getCalendarTitle()}
-        </h2>
-        
-        <button
-          onClick={handleNext}
-          className="p-2 hover:bg-gray-100 rounded-lg"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
-
-      {renderCalendarView()}
-
-      {/* Schedule Legend - Moved below calendar */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Schedule Legend</h3>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-100 border border-red-300 rounded"></div>
-            <span className="text-sm text-gray-700">Pending</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-100 border border-green-200 rounded"></div>
-            <span className="text-sm text-gray-700">Approved</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-yellow-100 border border-yellow-300 rounded"></div>
-            <span className="text-sm text-gray-700">Upcoming</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-gray-100 border border-gray-300 rounded"></div>
-            <span className="text-sm text-gray-700">Finished</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
-            <span className="text-sm text-gray-700">Available</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Plus className="h-4 w-4 text-gray-400" />
-            <span className="text-sm text-gray-700">Click to schedule</span>
-          </div>
-        </div>
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>How to use:</strong> Single click empty slots to toggle availability. Double click any slot to open details or schedule a lesson.
-          </p>
-        </div>
-      </div>
-      {/* Today's Schedule Summary */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Today's Schedule</h3>
-        <div className="space-y-3">
-          {schedule.find(s => s.date.toDateString() === new Date().toDateString())?.slots.map((slot) => (
-            <div key={slot.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-4">
-                <div className="text-center">
-                  <div className="text-sm font-medium text-gray-900">{slot.time}</div>
-                  <div className="text-xs text-gray-500">{slot.duration}min</div>
-                </div>
-                
-                {slot.student && (
-                  <img
-                    src={slot.student.avatar}
-                    alt={slot.student.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                )}
-                
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">{slot.subject}</h4>
-                  {slot.student && (
-                    <p className="text-sm text-gray-600">{slot.student.name}</p>
-                  )}
-                  <div className="flex items-center space-x-2 mt-1">
-                    {slot.type === 'online' ? (
-                      <div className="flex items-center text-xs text-blue-600">
-                        <Video className="h-3 w-3 mr-1" />
-                        Online
-                      </div>
-                    ) : (
-                      <div className="flex items-center text-xs text-green-600">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {slot.location}
-                      </div>
-                    )}
-                    <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(slot.status)}`}>
-                      {slot.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                {slot.meetingLink && (
-                  <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
-                    <ExternalLink className="h-4 w-4" />
-                  </button>
-                )}
-                <button 
-                  onClick={() => {
-                    setSelectedSlot(slot);
-                    setShowScheduleModal(true);
-                  }}
-                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  <Eye className="h-4 w-4" />
-                </button>
-                <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                  <Edit3 className="h-4 w-4" />
-                </button>
-                <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg">
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )) || (
-            <div className="text-center py-8 text-gray-500">
-              <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p>No lessons scheduled for today</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-
-      {/* Booking Settings */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Booking Settings</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-medium text-gray-900 mb-3">Booking Preferences</h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Minimum booking notice
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500">
-                  <option>2 hours</option>
-                  <option>4 hours</option>
-                  <option>1 day</option>
-                  <option>2 days</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Maximum advance booking
-                </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500">
-                  <option>1 week</option>
-                  <option>2 weeks</option>
-                  <option>1 month</option>
-                  <option>3 months</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-medium text-gray-900 mb-3">Automation Settings</h4>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Allow recurring bookings</span>
-                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-coral-500">
-                  <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-6" />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">Auto-confirm bookings</span>
-                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
-                  <span className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform translate-x-1" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Schedule Details Modal */}
       <ScheduleDetailsModal
         isOpen={showScheduleModal}

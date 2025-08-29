@@ -21,6 +21,7 @@ const [locationSearch, setLocationSearch] = useState('');
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFiltersChange }) => {
   const [openSections, setOpenSections] = useState({
     price: true,
+    location: true,
     experience: true,
     specialties: true,
     availability: true,
