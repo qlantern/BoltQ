@@ -4,16 +4,11 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Plus, 
-  Clock, 
-  User, 
   MapPin,
   Video,
   Edit3,
   Trash2,
-  Copy,
   ExternalLink,
-  Check,
-  X,
   Eye
 } from 'lucide-react';
 import ScheduleDetailsModal from './ScheduleDetailsModal';
@@ -45,7 +40,7 @@ const SchedulingSystem: React.FC = () => {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState<{ date: Date; time: string } | null>(null);
   const [availabilityToggle, setAvailabilityToggle] = useState<Map<string, boolean>>(new Map());
-  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [clickTimeout, setClickTimeout] = useState<number | null>(null);
 
   // Enhanced mock schedule data with more comprehensive examples
   const schedule: DaySchedule[] = [
@@ -201,14 +196,6 @@ const SchedulingSystem: React.FC = () => {
     return week;
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'short', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-
   const getSlotForDateTime = (date: Date, time: string) => {
     const daySchedule = schedule.find(s => 
       s.date.toDateString() === date.toDateString()
@@ -261,13 +248,272 @@ const SchedulingSystem: React.FC = () => {
     }
   };
 
+  const navigateDay = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() + (direction === 'next' ? 1 : -1));
+    setCurrentDate(newDate);
+  };
+
   const navigateWeek = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
     newDate.setDate(currentDate.getDate() + (direction === 'next' ? 7 : -7));
     setCurrentDate(newDate);
   };
 
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 1 : -1));
+    setCurrentDate(newDate);
+  };
+
+  const handlePrev = () => {
+    if (viewMode === 'day') navigateDay('prev');
+    else if (viewMode === 'week') navigateWeek('prev');
+    else navigateMonth('prev');
+  };
+
+  const handleNext = () => {
+    if (viewMode === 'day') navigateDay('next');
+    else if (viewMode === 'week') navigateWeek('next');
+    else navigateMonth('next');
+  };
+
+  const getCalendarTitle = () => {
+    if (viewMode === 'day') {
+      return currentDate.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    }
+    return currentDate.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
   const weekDays = getWeekDays(currentDate);
+
+  const renderDayView = () => {
+    const daySchedule = schedule.find(s => s.date.toDateString() === currentDate.toDateString());
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="p-4 bg-gray-50 text-center border-b border-gray-200">
+          <div className="text-lg font-medium text-gray-900">
+            {currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </div>
+        </div>
+        <div className="max-h-[70vh] overflow-y-auto">
+          {timeSlots.map(time => {
+            const slot = daySchedule?.slots.find(s => s.time === time);
+            const slotKey = `${currentDate.toDateString()}-${time}`;
+            const isAvailable = availabilityToggle.get(slotKey) || false;
+            return (
+              <div key={time} className="grid grid-cols-4 border-b border-gray-100 last:border-b-0">
+                <div className="p-3 bg-gray-50 border-r border-gray-200 text-sm text-gray-600 font-medium">
+                  {time}
+                </div>
+                <div 
+                  className={`col-span-3 p-2 min-h-[60px] relative cursor-pointer transition-colors ${
+                    slot ? 'hover:bg-gray-50' : isAvailable ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleSlotClick(currentDate, time, slot)}
+                >
+                  {slot ? (
+                    <div className={`p-2 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(slot.status)}`}>
+                      <div className="flex items-center space-x-2 mb-1">
+                        {slot.type === 'online' ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
+                        <span className="text-xs font-medium truncate">{slot.subject}</span>
+                      </div>
+                      {slot.student && (
+                        <div className="flex items-center space-x-1">
+                          <img src={slot.student.avatar} alt={slot.student.name} className="w-4 h-4 rounded-full object-cover" />
+                          <span className="text-xs truncate">{slot.student.name}</span>
+                        </div>
+                      )}
+                      <div className="text-xs mt-1 opacity-75">{slot.duration}min</div>
+                    </div>
+                  ) : (
+                    <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${isAvailable ? 'opacity-100' : 'opacity-0 hover:opacity-100'}`}>
+                      {isAvailable ? (
+                        <div className="text-xs text-blue-600 font-medium">Available</div>
+                      ) : (
+                        <Plus className="h-4 w-4 text-gray-400" />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const renderWeekView = () => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      {/* Week Header */}
+      <div className="grid grid-cols-8 border-b border-gray-200">
+        <div className="p-4 bg-gray-50 border-r border-gray-200">
+          <span className="text-sm font-medium text-gray-600">Time</span>
+        </div>
+        {weekDays.map((day, index) => (
+          <div key={index} className="p-4 bg-gray-50 text-center border-r border-gray-200 last:border-r-0">
+            <div className="text-sm font-medium text-gray-900">
+              {day.toLocaleDateString('en-US', { weekday: 'short' })}
+            </div>
+            <div className={`text-lg font-bold mt-1 ${
+              day.toDateString() === new Date().toDateString() 
+                ? 'text-coral-500' 
+                : 'text-gray-700'
+            }`}>
+              {day.getDate()}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Time Slots */}
+      <div className="max-h-96 overflow-y-auto">
+        {timeSlots.map((time) => (
+          <div key={time} className="grid grid-cols-8 border-b border-gray-100 last:border-b-0">
+            <div className="p-3 bg-gray-50 border-r border-gray-200 text-sm text-gray-600 font-medium">
+              {time}
+            </div>
+            {weekDays.map((day, dayIndex) => {
+              const slot = getSlotForDateTime(day, time);
+              const slotKey = `${day.toDateString()}-${time}`;
+              const isAvailable = availabilityToggle.get(slotKey) || false;
+              
+              return (
+                <div 
+                  key={dayIndex} 
+                  className={`p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer transition-colors ${
+                    slot ? 'hover:bg-gray-50' : isAvailable ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
+                  }`}
+                  onClick={() => handleSlotClick(day, time, slot)}
+                >
+                  {slot ? (
+                    <div className={`p-2 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(slot.status)}`}>
+                      <div className="flex items-center space-x-2 mb-1">
+                        {slot.type === 'online' ? (
+                          <Video className="h-3 w-3" />
+                        ) : (
+                          <MapPin className="h-3 w-3" />
+                        )}
+                        <span className="text-xs font-medium truncate">{slot.subject}</span>
+                      </div>
+                      {slot.student && (
+                        <div className="flex items-center space-x-1">
+                          <img
+                            src={slot.student.avatar}
+                            alt={slot.student.name}
+                            className="w-4 h-4 rounded-full object-cover"
+                          />
+                          <span className="text-xs truncate">{slot.student.name}</span>
+                        </div>
+                      )}
+                      <div className="text-xs mt-1 opacity-75">
+                        {slot.duration}min
+                      </div>
+                    </div>
+                  ) : (
+                    <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${
+                      isAvailable 
+                        ? 'opacity-100' 
+                        : 'opacity-0 hover:opacity-100'
+                    }`}>
+                      {isAvailable ? (
+                        <div className="text-xs text-blue-600 font-medium">Available</div>
+                      ) : (
+                        <Plus className="h-4 w-4 text-gray-400" />
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderMonthView = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const startDayOfWeek = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday, etc.
+
+    const days = [];
+    // Add blank days for the start of the month
+    for (let i = 0; i < startDayOfWeek; i++) {
+      days.push(<div key={`blank-start-${i}`} className="border-r border-b border-gray-200 min-h-[100px]"></div>);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const daySchedule = schedule.find(s => s.date.toDateString() === date.toDateString());
+      const isToday = date.toDateString() === new Date().toDateString();
+
+      days.push(
+        <div 
+          key={day} 
+          className={`p-2 border-r border-b border-gray-200 cursor-pointer hover:bg-gray-50 min-h-[100px] ${isToday ? 'bg-coral-50' : ''}`}
+          onClick={() => {
+            setCurrentDate(date);
+            setViewMode('day');
+          }}
+        >
+          <div className={`font-bold ${isToday ? 'text-coral-500' : ''}`}>{day}</div>
+          {daySchedule && daySchedule.slots.length > 0 && (
+            <div className="text-xs mt-1 text-gray-600">
+              {daySchedule.slots.length} lesson{daySchedule.slots.length > 1 ? 's' : ''}
+            </div>
+          )}
+        </div>
+      );
+    }
+    
+    const totalCells = Math.ceil((startDayOfWeek + daysInMonth) / 7) * 7;
+    for (let i = days.length; i < totalCells; i++) {
+        days.push(<div key={`blank-end-${i}`} className="border-r border-b border-gray-200 min-h-[100px]"></div>);
+    }
+
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="grid grid-cols-7">
+          {weekdays.map(day => (
+            <div key={day} className="p-4 bg-gray-50 text-center border-r border-b border-gray-200 font-medium text-gray-900">
+              {day}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7">
+          {days}
+        </div>
+      </div>
+    );
+  };
+
+  const renderCalendarView = () => {
+    switch (viewMode) {
+      case 'day':
+        return renderDayView();
+      case 'week':
+        return renderWeekView();
+      case 'month':
+        return renderMonthView();
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -304,13 +550,6 @@ const SchedulingSystem: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
-          <button
-            onClick={() => setShowNewEventModal(true)}
-            className="flex items-center px-4 py-2 bg-coral-500 text-white rounded-lg hover:bg-coral-600"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Lesson
-          </button>
           <button className="flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
             <ExternalLink className="h-4 w-4 mr-2" />
             Sync Calendar
@@ -321,116 +560,25 @@ const SchedulingSystem: React.FC = () => {
       {/* Calendar Navigation */}
       <div className="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm border border-gray-200">
         <button
-          onClick={() => navigateWeek('prev')}
+          onClick={handlePrev}
           className="p-2 hover:bg-gray-100 rounded-lg"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         
         <h2 className="text-lg font-semibold text-gray-900">
-          {currentDate.toLocaleDateString('en-US', { 
-            month: 'long', 
-            year: 'numeric' 
-          })}
+          {getCalendarTitle()}
         </h2>
         
         <button
-          onClick={() => navigateWeek('next')}
+          onClick={handleNext}
           className="p-2 hover:bg-gray-100 rounded-lg"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Weekly Calendar View */}
-      {viewMode === 'week' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Week Header */}
-          <div className="grid grid-cols-8 border-b border-gray-200">
-            <div className="p-4 bg-gray-50 border-r border-gray-200">
-              <span className="text-sm font-medium text-gray-600">Time</span>
-            </div>
-            {weekDays.map((day, index) => (
-              <div key={index} className="p-4 bg-gray-50 text-center border-r border-gray-200 last:border-r-0">
-                <div className="text-sm font-medium text-gray-900">
-                  {day.toLocaleDateString('en-US', { weekday: 'short' })}
-                </div>
-                <div className={`text-lg font-bold mt-1 ${
-                  day.toDateString() === new Date().toDateString() 
-                    ? 'text-coral-500' 
-                    : 'text-gray-700'
-                }`}>
-                  {day.getDate()}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Time Slots */}
-          <div className="max-h-96 overflow-y-auto">
-            {timeSlots.map((time) => (
-              <div key={time} className="grid grid-cols-8 border-b border-gray-100 last:border-b-0">
-                <div className="p-3 bg-gray-50 border-r border-gray-200 text-sm text-gray-600 font-medium">
-                  {time}
-                </div>
-                {weekDays.map((day, dayIndex) => {
-                  const slot = getSlotForDateTime(day, time);
-                  const slotKey = `${day.toDateString()}-${time}`;
-                  const isAvailable = availabilityToggle.get(slotKey) || false;
-                  
-                  return (
-                    <div 
-                      key={dayIndex} 
-                      className={`p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer transition-colors ${
-                        slot ? 'hover:bg-gray-50' : isAvailable ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
-                      }`}
-                      onClick={() => handleSlotClick(day, time, slot)}
-                    >
-                      {slot ? (
-                        <div className={`p-2 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(slot.status)}`}>
-                          <div className="flex items-center space-x-2 mb-1">
-                            {slot.type === 'online' ? (
-                              <Video className="h-3 w-3" />
-                            ) : (
-                              <MapPin className="h-3 w-3" />
-                            )}
-                            <span className="text-xs font-medium truncate">{slot.subject}</span>
-                          </div>
-                          {slot.student && (
-                            <div className="flex items-center space-x-1">
-                              <img
-                                src={slot.student.avatar}
-                                alt={slot.student.name}
-                                className="w-4 h-4 rounded-full object-cover"
-                              />
-                              <span className="text-xs truncate">{slot.student.name}</span>
-                            </div>
-                          )}
-                          <div className="text-xs mt-1 opacity-75">
-                            {slot.duration}min
-                          </div>
-                        </div>
-                      ) : (
-                        <div className={`absolute inset-0 flex items-center justify-center transition-opacity ${
-                          isAvailable 
-                            ? 'opacity-100' 
-                            : 'opacity-0 hover:opacity-100'
-                        }`}>
-                          {isAvailable ? (
-                            <div className="text-xs text-blue-600 font-medium">Available</div>
-                          ) : (
-                            <Plus className="h-4 w-4 text-gray-400" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {renderCalendarView()}
 
       {/* Schedule Legend - Moved below calendar */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">

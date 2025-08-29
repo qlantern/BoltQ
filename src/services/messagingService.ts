@@ -1,4 +1,4 @@
-import { Message, Conversation, MessageThread, TypingIndicator, MessageNotification } from '../types/messaging';
+import { Message, Conversation, TypingIndicator, MessageAttachment } from '../types/messaging';
 
 class MessagingService {
   private conversations: Map<string, Conversation> = new Map();
@@ -185,7 +185,13 @@ class MessagingService {
   }
 
   // Send a new message
-  async sendMessage(conversationId: string, senderId: string, content: string, messageType: 'text' | 'image' | 'file' = 'text'): Promise<Message> {
+  async sendMessage(
+    conversationId: string,
+    senderId: string,
+    content: string,
+    messageType: 'text' | 'image' | 'file' = 'text',
+    attachments?: MessageAttachment[]
+  ): Promise<Message> {
     const conversation = this.conversations.get(conversationId);
     if (!conversation) {
       throw new Error('Conversation not found');
@@ -204,7 +210,8 @@ class MessagingService {
       content,
       timestamp: new Date(),
       isRead: false,
-      messageType
+      messageType,
+      attachments
     };
 
     // Add to messages
