@@ -58,6 +58,29 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               ))}
             </div>
           )}
+            {/* File Messages */}
+                  {message.fileData ? (
+                    <div className="file-message">
+                      {message.fileData && (
+                        <>
+                          <a
+                            href={message.fileData.data}
+                            download={message.fileData.name}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline"
+                          >
+                            {message.fileData.name}
+                          </a>
+                          <span className="text-xs text-gray-500 ml-2">
+                            ({message.fileData.type}, {Math.round(message.fileData.size / 1024)} KB)
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <span>{message.content}</span>
+                  )}
           {/* Time and Status */}
           <div className={`flex items-center justify-end mt-1 space-x-1 ${
             isOwn ? 'text-white/70' : 'text-gray-500'

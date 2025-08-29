@@ -26,6 +26,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleFileButtonClick = () => {
     fileInputRef.current?.click();
   };
@@ -46,7 +47,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const otherParticipant = conversation.participants.find(p => p.userId !== currentUserId);
 
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   useEffect(() => {
@@ -54,13 +55,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [conversation.id]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [conversation]);
 
   const handleSendMessage = () => {
+    if (selectedFile && onSendAttachment) {
+      onSendAttachment(selectedFile);
+      setSelectedFile(null);
+      setMessageInput('');
+      setIsTyping(false);
+      return;
+    }
     if (messageInput.trim()) {
       onSendMessage(messageInput.trim());
       setMessageInput('');
@@ -68,7 +72,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -240,9 +244,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           
           <button
             onClick={handleSendMessage}
-            disabled={!messageInput.trim()}
+            disabled={!messageInput.trim() && !selectedFile}
             className={`p-2 rounded-full transition-colors ${
-              messageInput.trim()
+              (messageInput.trim() || selectedFile)
                 ? 'bg-coral-500 text-white hover:bg-coral-600'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
