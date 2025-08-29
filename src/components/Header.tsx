@@ -36,7 +36,12 @@ const Header = ({ onNavigate }: HeaderProps) => {
         <div className="flex items-center h-16">
           {/* Logo fixed to left */}
           <div className="w-60 px-8 border-r border-gray-200 dark:border-gray-800">
-            <span className="text-2xl font-bold text-coral-500 dark:text-coral-400">TeachBnB</span>
+            <button 
+              onClick={() => onNavigate('home')}
+              className="text-2xl font-bold text-coral-500 dark:text-coral-400 hover:text-coral-600 dark:hover:text-coral-300 transition-colors"
+            >
+              TeachBnB
+            </button>
           </div>
 
           {/* Spacer */}
@@ -74,21 +79,23 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   <Bell className="h-5 w-5" />
                 </button>
 
-                <button
-                  onClick={() => {
-                    // Navigate to favorites page - for now just show count
-                    alert(`You have ${favorites.length} favorite teachers`);
-                  }}
-                  className="text-gray-700 hover:text-coral-500 transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400"
-                  title={t('common.favorites')}
-                >
-                  <Heart className="h-5 w-5" />
-                  {favorites.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                      {favorites.length > 9 ? '9+' : favorites.length}
-                    </span>
-                  )}
-                </button>
+                {user?.role === 'student' && (
+                  <button
+                    onClick={() => {
+                      // Navigate to favorites page - for now just show count
+                      alert(`You have ${favorites.length} favorite teachers`);
+                    }}
+                    className="text-gray-700 hover:text-coral-500 transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400"
+                    title={t('common.favorites')}
+                  >
+                    <Heart className="h-5 w-5" />
+                    {favorites.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                        {favorites.length > 9 ? '9+' : favorites.length}
+                      </span>
+                    )}
+                  </button>
+                )}
               </>
             )}
 
@@ -121,12 +128,6 @@ const Header = ({ onNavigate }: HeaderProps) => {
             {!isAuthenticated ? (
               <>
                 <button 
-                  onClick={() => onNavigate('become-teacher')}
-                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400"
-                >
-                  {t('common.becomeTeacher')}
-                </button>
-                <button 
                   onClick={() => onNavigate('signup')}
                   className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400"
                 >
@@ -141,14 +142,6 @@ const Header = ({ onNavigate }: HeaderProps) => {
               </>
             ) : (
               <>
-                {user?.role === 'student' && (
-                  <button 
-                    onClick={() => onNavigate('become-teacher')}
-                    className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400"
-                  >
-                    {t('common.becomeTeacher')}
-                  </button>
-                )}
                 {user?.role === 'teacher' && (
                   <button 
                     onClick={() => onNavigate('teacher-dashboard')}
@@ -159,6 +152,12 @@ const Header = ({ onNavigate }: HeaderProps) => {
                 )}
               </>
             )}
+            <button 
+              onClick={() => onNavigate('become-teacher')}
+              className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400"
+            >
+              {t('common.becomeTeacher')}
+            </button>
             <button className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-coral-500 dark:text-gray-300 dark:hover:text-coral-400">
               {t('common.help')}
             </button>
