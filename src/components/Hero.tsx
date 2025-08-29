@@ -6,8 +6,7 @@ interface HeroProps {
 	onBecomeTeacherClick?: () => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
-	// const { user, isAuthenticated } = useAuth();
+const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
 	return (
 		<div className="relative bg-gradient-to-br from-coral-500 via-coral-400 to-orange-400">
 			<div className="absolute inset-0 bg-black opacity-10"></div>
@@ -23,7 +22,7 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
 					</p>
 
 					{/* Enhanced Search Bar */}
-					<div className="max-w-4xl mx-auto mb-12">
+					<div className="max-w-4xl mx-auto mb-6">
 						<div className="bg-white rounded-xl shadow-2xl p-2">
 							<div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2">
 								<div className="flex-1 w-full">
@@ -42,6 +41,16 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick }) => {
 								</button>
 							</div>
 						</div>
+					</div>
+
+					{/* Become a Teacher Button */}
+					<div className="mb-12">
+						<button
+							onClick={onBecomeTeacherClick}
+							className="w-full md:w-auto bg-white text-coral-500 px-8 py-4 rounded-lg hover:bg-coral-500 hover:text-white font-semibold shadow-md transition-colors duration-200 border-2 border-coral-500"
+						>
+							Become a Teacher
+						</button>
 					</div>
 
 					{/* Stats */}

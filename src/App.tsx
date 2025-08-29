@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import TeacherCard from './components/TeacherCard';
 import FeaturedTeachersCarousel from './components/FeaturedTeachersCarousel';
 import SearchResults from './components/SearchResults';
 import TeacherProfile from './components/TeacherProfile';
@@ -110,7 +109,7 @@ function AppContent() {
           }
         >
           {user?.role === 'admin' ? (
-            <AdminDashboard onNavigate={handleNavigate} onLogout={handleAdminLogout} />
+            <AdminDashboard onLogout={handleAdminLogout} />
           ) : (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
               <div className="text-center">
@@ -293,13 +292,7 @@ function AppContent() {
                   Find a Teacher
                 </button>
                 <button 
-                  onClick={() => {
-                    if (isAuthenticated) {
-                      setCurrentView('become-teacher');
-                    } else {
-                      setCurrentView('signin');
-                    }
-                  }}
+                  onClick={() => setCurrentView('become-teacher')}
                   className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-coral-500 font-semibold transition-colors duration-200"
                 >
                   Become a Teacher
@@ -332,13 +325,7 @@ function AppContent() {
                   <ul className="space-y-2 text-gray-400">
                     <li>
                       <button 
-                        onClick={() => {
-                          if (isAuthenticated) {
-                            setCurrentView('become-teacher');
-                          } else {
-                            setCurrentView('signin');
-                          }
-                        }}
+                        onClick={() => setCurrentView('become-teacher')}
                         className="hover:text-white text-left"
                       >
                         Become a Teacher
@@ -397,6 +384,5 @@ function App() {
 export default App;
 
 export interface AdminDashboardProps {
-  onNavigate: (view: string) => void;
   onLogout?: () => Promise<void>;
 }

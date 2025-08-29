@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   avatar: string;
-  role: 'student' | 'teacher';
+  role: 'student' | 'teacher' | 'admin';
   isEmailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -14,7 +14,6 @@ export interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  session?: Session | null;
   session: Session | null;
 }
 
