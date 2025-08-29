@@ -126,4 +126,3 @@ const TeacherDashboard: React.FC = () => {
 };
 
 export default TeacherDashboard;
-this is for the update 
