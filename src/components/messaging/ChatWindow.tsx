@@ -8,6 +8,7 @@ interface ChatWindowProps {
   messages: Message[];
   currentUserId: string;
   onSendMessage: (content: string) => void;
+  onSendAttachment?: (file: File) => void;
   onBack: () => void;
 }
 
@@ -16,12 +17,31 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   messages,
   currentUserId,
   onSendMessage,
+  onSendAttachment,
   onBack
 }) => {
   const [messageInput, setMessageInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleSendAttachment = () => {
+    if (selectedFile && onSendAttachment) {
+      onSendAttachment(selectedFile);
+      setSelectedFile(null);
+    }
+  };
 
   const otherParticipant = conversation.participants.find(p => p.userId !== currentUserId);
 
@@ -163,10 +183,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       {/* Input Area */}
       <div className="p-4 border-t border-gray-200 bg-white">
         <div className="flex items-end space-x-3">
-          <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full">
+          {/* File Upload Button */}
+          <button
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full"
+            onClick={handleFileButtonClick}
+            type="button"
+          >
             <Paperclip className="h-5 w-5" />
           </button>
-          
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+
           <div className="flex-1 relative">
             <textarea
               ref={inputRef}
@@ -181,6 +212,26 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 height: 'auto'
               }}
             />
+            {/* File Preview */}
+            {selectedFile && (
+              <div className="mt-2 flex items-center space-x-2">
+                <span className="text-sm text-gray-700">{selectedFile.name}</span>
+                <button
+                  className="text-xs text-red-500 hover:underline"
+                  onClick={() => setSelectedFile(null)}
+                  type="button"
+                >
+                  Remove
+                </button>
+                <button
+                  className="text-xs text-coral-500 hover:underline"
+                  onClick={handleSendAttachment}
+                  type="button"
+                >
+                  Send File
+                </button>
+              </div>
+            )}
           </div>
 
           <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full">

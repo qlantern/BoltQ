@@ -42,7 +42,22 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         >
           {/* Message Content */}
           <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-          
+          {/* Attachments */}
+          {message.attachments && message.attachments.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {message.attachments.map(att => (
+                <a
+                  key={att.id}
+                  href={att.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-xs text-coral-500 underline"
+                >
+                  {att.fileName}
+                </a>
+              ))}
+            </div>
+          )}
           {/* Time and Status */}
           <div className={`flex items-center justify-end mt-1 space-x-1 ${
             isOwn ? 'text-white/70' : 'text-gray-500'
