@@ -58,7 +58,7 @@ class AuthService {
       },
       {
         id: 'user-2',
-        email: 'teacher@example.com',
+        email: 'teacher@bnb.com',
         firstName: 'Sarah',
         lastName: 'Johnson',
         avatar: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
@@ -70,7 +70,7 @@ class AuthService {
     ];
 
     for (const user of mockUsers) {
-      const { hash, salt } = await hashPassword('password123');
+      const { hash, salt } = await hashPassword('teacher123');
       const storedUser: StoredUser = {
         ...user,
         passwordHash: hash,
@@ -193,7 +193,7 @@ class AuthService {
     this.emit('auth:stateChange', { 
       user: userWithoutSensitive, 
       isAuthenticated: true,
-      session 
+      session
     });
 
     return { user: userWithoutSensitive, error: null };
@@ -314,7 +314,7 @@ class AuthService {
     this.emit('auth:stateChange', { 
       user: null, 
       isAuthenticated: false,
-      session: null 
+      session: null
     });
   }
 
@@ -363,7 +363,7 @@ class AuthService {
     this.emit('auth:stateChange', { 
       user: updatedUser, 
       isAuthenticated: true,
-      session: this.currentSession 
+      session: this.currentSession
     });
 
     return { user: updatedUser, error: null };

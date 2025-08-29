@@ -153,7 +153,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
               <h4 className="font-semibold text-lg">Online Classes</h4>
             </div>
             <p className="text-gray-600 text-sm mb-3">
-              Learn from anywhere with video calls. Perfect for flexible scheduling and students worldwide.
+              Learn from anywhere with video calls. Perfect for flexible scheduling across Algeria.
             </p>
             <div className="text-sm text-blue-600 font-medium">
               ✓ Video call lessons ✓ Screen sharing ✓ Digital materials
@@ -175,7 +175,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
               <h4 className="font-semibold text-lg">Offline Classes</h4>
             </div>
             <p className="text-gray-600 text-sm mb-3">
-              Face-to-face lessons in {teacher.location}. Ideal for personalized attention and hands-on learning.
+              Face-to-face lessons in {teacher.location}. Ideal for personalized attention and local learning experience.
             </p>
             <div className="text-sm text-green-600 font-medium">
               ✓ In-person interaction ✓ Physical materials ✓ Local experience

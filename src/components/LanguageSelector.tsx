@@ -27,12 +27,14 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'dropdown
 
   if (variant === 'icon') {
     return (
-      <button 
-        className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-coral-500 transition-colors duration-200"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <Globe className="h-4 w-4 mr-1" />
-        {currentLanguage.code.toUpperCase()}
+      <div className="relative">
+        <button 
+          className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 hover:text-coral-500 transition-colors duration-200"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <Globe className="h-4 w-4 mr-1" />
+          {currentLanguage.code.toUpperCase()}
+        </button>
         
         {isOpen && (
           <div className="absolute top-full right-0 mt-1 py-1 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
@@ -48,7 +50,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'dropdown
             ))}
           </div>
         )}
-      </button>
+      </div>
     );
   }
 

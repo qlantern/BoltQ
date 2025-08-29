@@ -4,7 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   avatar: string;
-  role: 'student' | 'teacher';
+  role: 'student' | 'teacher' | 'admin';
   isEmailVerified: boolean;
   createdAt: Date;
   updatedAt: Date;

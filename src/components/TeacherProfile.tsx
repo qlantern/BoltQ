@@ -207,7 +207,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                           <h4 className="font-semibold text-blue-800">Online Classes</h4>
                         </div>
                         <p className="text-blue-700 text-sm">
-                          Interactive video lessons from the comfort of your home. Perfect for flexible scheduling and students from anywhere.
+                          Interactive video lessons from the comfort of your home. Perfect for flexible scheduling across Algeria.
                         </p>
                       </div>
                     )}
@@ -218,7 +218,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                           <h4 className="font-semibold text-green-800">Offline Classes</h4>
                         </div>
                         <p className="text-green-700 text-sm">
-                          Face-to-face lessons in {teacher.location}. Ideal for personalized attention and hands-on learning experience.
+                          Face-to-face lessons in {teacher.location}. Ideal for personalized attention and local learning experience.
                         </p>
                       </div>
                     )}
@@ -355,32 +355,6 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
               </div>
 
               <div className="space-y-4 mb-6">
-                <button className="w-full bg-coral-500 text-white py-3 px-4 rounded-lg hover:bg-coral-600 font-semibold flex items-center justify-center">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Book Lesson
-                </button>
-                {teacher.offersOnlineClasses && teacher.offersOfflineClasses && (
-                  <div className="grid grid-cols-2 gap-2">
-                    <button className="bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 text-sm font-medium">
-                      Online Class
-                    </button>
-                    <button className="bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 text-sm font-medium">
-                      Offline Class
-                    </button>
-                  </div>
-                )}
-                <button className="w-full bg-teal-500 text-white py-3 px-4 rounded-lg hover:bg-teal-600 font-semibold flex items-center justify-center">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Send Message
-                </button>
-              </div>
-
-              <div className="text-center text-sm text-gray-600">
-                <Clock className="h-4 w-4 inline mr-1" />
-                Usually responds {teacher.responseTime}
-              </div>
-
-              <div className="space-y-4 mb-6">
                 <button 
                   onClick={() => setIsBookingModalOpen(true)}
                   className="w-full bg-coral-500 text-white py-3 px-4 rounded-lg hover:bg-coral-600 font-semibold flex items-center justify-center"
@@ -390,18 +364,32 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
                 </button>
                 {teacher.offersOnlineClasses && teacher.offersOfflineClasses && (
                   <div className="grid grid-cols-2 gap-2">
-                    <button className="bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 text-sm font-medium">
+                    <button 
+                      onClick={() => setIsBookingModalOpen(true)}
+                      className="bg-blue-500 text-white py-2 px-3 rounded-lg hover:bg-blue-600 text-sm font-medium"
+                    >
                       Online Class
                     </button>
-                    <button className="bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 text-sm font-medium">
+                    <button 
+                      onClick={() => setIsBookingModalOpen(true)}
+                      className="bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 text-sm font-medium"
+                    >
                       Offline Class
                     </button>
                   </div>
                 )}
-                <button className="w-full bg-teal-500 text-white py-3 px-4 rounded-lg hover:bg-teal-600 font-semibold flex items-center justify-center">
+                <button 
+                  onClick={handleMessageTeacher}
+                  className="w-full bg-teal-500 text-white py-3 px-4 rounded-lg hover:bg-teal-600 font-semibold flex items-center justify-center"
+                >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Send Message
                 </button>
+              </div>
+
+              <div className="text-center text-sm text-gray-600">
+                <Clock className="h-4 w-4 inline mr-1" />
+                Usually responds {teacher.responseTime}
               </div>
             </div>
           </div>

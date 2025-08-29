@@ -8,6 +8,14 @@ export interface Message {
   isRead: boolean;
   messageType: 'text' | 'image' | 'file' | 'booking_request' | 'system';
   attachments?: MessageAttachment[];
+  fileData?: FileData;
+}
+
+export interface FileData {
+  name: string;
+  type: string;
+  size: number;
+  data: string;
 }
 
 export interface MessageAttachment {
