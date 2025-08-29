@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Filter, X, MapPin, Search } from 'lucide-react';
 
 interface FilterSidebarProps {
   isOpen: boolean;
@@ -15,6 +15,9 @@ interface FilterState {
   ratings: number[];
 }
 
+const [priceRange, setPriceRange] = useState([500, 3000]);
+const [locationSearch, setLocationSearch] = useState('');
+
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFiltersChange }) => {
   const [openSections, setOpenSections] = useState({
     price: true,
@@ -23,6 +26,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFilter
     availability: true,
     rating: true
   });
+  const [priceRange, setPriceRange] = useState([500, 3000]);
+  const [locationSearch, setLocationSearch] = useState('');
 
   const [filters, setFilters] = useState<FilterState>({
     priceRanges: [],
@@ -53,6 +58,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFilter
       locations: []
     };
     setFilters(clearedFilters);
+    setPriceRange([500, 3000]);
+    setLocationSearch('');
     setPriceRange([500, 3000]);
     setLocationSearch('');
     onFiltersChange?.(clearedFilters);
@@ -101,47 +108,115 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFilter
 
         {/* Price Range */}
         <FilterSection
-          title="Price per hour"
+          title="Price per hour (DZD)"
           isOpen={openSections.price}
           onToggle={() => toggleSection('price')}
         >
-          <div className="space-y-3">
-            <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={filters.priceRanges.includes('under-1000')}
-                onChange={(e) => handleFilterChange('priceRanges', 'under-1000', e.target.checked)}
-                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Under 1,000 DZD</span>
-            </label>
-            <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={filters.priceRanges.includes('1000-1500')}
-                onChange={(e) => handleFilterChange('priceRanges', '1000-1500', e.target.checked)}
-                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">1,000 - 1,500 DZD</span>
-            </label>
-            <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={filters.priceRanges.includes('1500-2000')}
-                onChange={(e) => handleFilterChange('priceRanges', '1500-2000', e.target.checked)}
-                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">1,500 - 2,000 DZD</span>
-            </label>
-            <label className="flex items-center">
-              <input 
-                type="checkbox" 
-                checked={filters.priceRanges.includes('over-2000')}
-                onChange={(e) => handleFilterChange('priceRanges', 'over-2000', e.target.checked)}
-                className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
-              />
-              <span className="text-sm text-gray-700 dark:text-gray-300">Over 2,000 DZD</span>
-            </label>
+          <div className="space-y-4">
+            <div className="px-3">
+              <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300 mb-2">
+                <span>{priceRange[0]} DZD</span>
+                <span>{priceRange[1]} DZD</span>
+              </div>
+              <div className="relative">
+                <input
+                  type="range"
+                  min="500"
+                  max="3000"
+                  step="100"
+                  value={priceRange[0]}
+                  onChange={(e) => {
+                    const newMin = parseInt(e.target.value);
+                    if (newMin <= priceRange[1]) {
+                      setPriceRange([newMin, priceRange[1]]);
+                    }
+                  }}
+                  className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+                />
+                <input
+                  type="range"
+                  min="500"
+                  max="3000"
+                  step="100"
+                  value={priceRange[1]}
+                  onChange={(e) => {
+                    const newMax = parseInt(e.target.value);
+                    if (newMax >= priceRange[0]) {
+                      setPriceRange([priceRange[0], newMax]);
+                    }
+                  }}
+                  className="absolute w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={filters.priceRanges.includes('under-1000')}
+                  onChange={(e) => handleFilterChange('priceRanges', 'under-1000', e.target.checked)}
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">Under 1,000 DZD</span>
+              </label>
+              <label className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={filters.priceRanges.includes('1000-1500')}
+                  onChange={(e) => handleFilterChange('priceRanges', '1000-1500', e.target.checked)}
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">1,000 - 1,500 DZD</span>
+              </label>
+              <label className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={filters.priceRanges.includes('1500-2000')}
+                  onChange={(e) => handleFilterChange('priceRanges', '1500-2000', e.target.checked)}
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">1,500 - 2,000 DZD</span>
+              </label>
+              <label className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  checked={filters.priceRanges.includes('over-2000')}
+                  onChange={(e) => handleFilterChange('priceRanges', 'over-2000', e.target.checked)}
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">Over 2,000 DZD</span>
+              </label>
+            </div>
+          </div>
+        </FilterSection>
+
+        {/* Location Search */}
+        <FilterSection
+          title="Location"
+          isOpen={openSections.location}
+          onToggle={() => toggleSection('location')}
+        >
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              value={locationSearch}
+              onChange={(e) => setLocationSearch(e.target.value)}
+              placeholder="Search by city..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            />
+          </div>
+          <div className="mt-3 space-y-2">
+            {['Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Djelfa', 'Sétif'].map((city) => (
+              <label key={city} className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">{city}</span>
+              </label>
+            ))}
           </div>
         </FilterSection>
 
@@ -216,11 +291,92 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFilter
 
         {/* Availability */}
         <FilterSection
-          title="Class Type"
+          title="Class Format & Type"
           isOpen={openSections.availability}
           onToggle={() => toggleSection('availability')}
         >
           <div className="space-y-3">
+            <div className="mb-4">
+              <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format</h5>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={filters.classTypes.includes('online')}
+                    onChange={(e) => handleFilterChange('classTypes', 'online', e.target.checked)}
+                    className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Online Classes</span>
+                </label>
+                <label className="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={filters.classTypes.includes('offline')}
+                    onChange={(e) => handleFilterChange('classTypes', 'offline', e.target.checked)}
+                    className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Offline Classes</span>
+                </label>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Class Type</h5>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={filters.classTypes.includes('individual')}
+                    onChange={(e) => handleFilterChange('classTypes', 'individual', e.target.checked)}
+                    className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Individual Classes</span>
+                </label>
+                <label className="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={filters.classTypes.includes('group')}
+                    onChange={(e) => handleFilterChange('classTypes', 'group', e.target.checked)}
+                    className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Group Classes</span>
+                </label>
+              </div>
+            </div>
+            
+            <div>
+              <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Availability</h5>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={filters.classTypes.includes('available-now')}
+                    onChange={(e) => handleFilterChange('classTypes', 'available-now', e.target.checked)}
+                    className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Available now</span>
+                </label>
+                <label className="flex items-center">
+                  <input 
+                    type="checkbox" 
+                    checked={filters.classTypes.includes('available-week')}
+                    onChange={(e) => handleFilterChange('classTypes', 'available-week', e.target.checked)}
+                    className="mr-3 rounded border-gray-300 dark:border-gray-600 text-coral-500 focus:ring-coral-500 bg-gray-100 dark:bg-gray-700" 
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Available this week</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </FilterSection>
+
+        {/* Availability - Old section removed and replaced above */}
+        <FilterSection
+          title="Class Type (Legacy)"
+          isOpen={false}
+          onToggle={() => {}}
+        >
+          <div className="hidden">
             <label className="flex items-center">
               <input 
                 type="checkbox" 
@@ -258,7 +414,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFilter
               <span className="text-sm text-gray-700 dark:text-gray-300">Available this week</span>
             </label>
           </div>
-        </FilterSection>
 
         {/* Rating */}
         <FilterSection

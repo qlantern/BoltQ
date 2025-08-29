@@ -103,7 +103,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     <div className="min-h-screen bg-gray-100 p-8 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => window.location.href = '/'}
+              className="text-2xl font-bold text-coral-500 hover:text-coral-600 transition-colors"
+            >
+              TeachBnB
+            </button>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+          </div>
           <button
             onClick={() => onLogout?.()}
             className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"

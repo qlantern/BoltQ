@@ -169,12 +169,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
 
           {/* Bottom Row */}
           <div className="flex items-center justify-between mt-auto">
-            <div className="flex flex-col space-y-1">
-              <div className="flex items-center text-gray-600 dark:text-gray-300 text-xs">
-                <Clock className="h-3 w-3 mr-1" />
-                Responds {teacher.responseTime}
-              </div>
-              <div className="flex space-x-2">
+            <div className="flex space-x-2">
                 {teacher.offersOnlineClasses && (
                   <span className="bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-300 text-xs px-2 py-1 rounded border border-blue-200 dark:border-blue-700">
                     Online
@@ -185,13 +180,9 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
                     Offline
                   </span>
                 )}
-              </div>
             </div>
             <div className="text-right">
-              <div className="text-xl font-bold text-gray-900 dark:text-white">
-                {teacher.pricePerHour} DZD
-                <span className="text-sm font-normal text-gray-600 dark:text-gray-300">/lesson</span>
-              </div>
+              <div className="text-lg font-bold text-gray-900 dark:text-white">{teacher.pricePerHour} DZD/hour</div>
             </div>
           </div>
 

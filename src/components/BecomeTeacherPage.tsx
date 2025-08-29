@@ -437,24 +437,6 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Hourly Rate (DZD) *
-          </label>
-          <select
-            value={hourlyRate}
-            onChange={(e) => setHourlyRate(parseInt(e.target.value))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
-          >
-            <option value={500}>500 DZD/hour</option>
-            <option value={1000}>1,000 DZD/hour</option>
-            <option value={1500}>1,500 DZD/hour</option>
-            <option value={2000}>2,000 DZD/hour</option>
-            <option value={2500}>2,500 DZD/hour</option>
-            <option value={3000}>3,000+ DZD/hour</option>
-          </select>
-        </div>
-
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-3">
             Teaching Specialties * (Select all that apply)
@@ -472,6 +454,30 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
               </label>
             ))}
           </div>
+          
+          {/* Custom Specialty Input */}
+          <div className="mt-4 p-4 border border-gray-200 rounded-lg">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Add Custom Specialty
+            </label>
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={customSpecialty}
+                onChange={(e) => setCustomSpecialty(e.target.value)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+                placeholder="Enter custom specialty..."
+              />
+              <button
+                type="button"
+                onClick={addCustomSpecialty}
+                disabled={!customSpecialty.trim()}
+                className="px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Add
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="mb-6">
@@ -482,6 +488,20 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
           
           {/* Language Selection Interface */}
           <div className="space-y-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (selectedLanguages[0]?.language && selectedLanguages[0]?.fluency) {
+                  addLanguage(selectedLanguages[0].language, selectedLanguages[0].fluency);
+                  setSelectedLanguages([]);
+                }
+              }}
+              disabled={!selectedLanguages[0]?.language || !selectedLanguages[0]?.fluency}
+              className="w-full px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              Add Language
+            </button>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-gray-200 rounded-lg">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
@@ -518,20 +538,6 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
                 </select>
               </div>
             </div>
-            
-            <button
-              type="button"
-              onClick={() => {
-                if (selectedLanguages[0]?.language && selectedLanguages[0]?.fluency) {
-                  addLanguage(selectedLanguages[0].language, selectedLanguages[0].fluency);
-                  setSelectedLanguages([]);
-                }
-              }}
-              disabled={!selectedLanguages[0]?.language || !selectedLanguages[0]?.fluency}
-              className="w-full px-4 py-2 bg-coral-500 text-white rounded-md hover:bg-coral-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            >
-              Add Language
-            </button>
 
             {/* Selected Languages Display */}
             {applicationData.languages.length > 0 && (

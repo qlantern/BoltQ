@@ -43,16 +43,6 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
 						</div>
 					</div>
 
-					{/* Become a Teacher Button */}
-					<div className="mb-12">
-						<button
-							onClick={onBecomeTeacherClick}
-							className="w-full md:w-auto bg-white text-coral-500 px-8 py-4 rounded-lg hover:bg-coral-500 hover:text-white font-semibold shadow-md transition-colors duration-200 border-2 border-coral-500"
-						>
-							Become a Teacher
-						</button>
-					</div>
-
 					{/* Stats */}
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-8">
 						<div className="text-center">

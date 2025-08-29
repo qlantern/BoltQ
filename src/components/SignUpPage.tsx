@@ -139,37 +139,6 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ onNavigate }) => {
               </div>
             )}
 
-            {/* Role Selection */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                I want to join as a
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleInputChange('role', 'student')}
-                  className={`p-3 text-sm rounded-lg border-2 transition-colors ${
-                    formData.role === 'student'
-                      ? 'border-coral-500 bg-coral-50 text-coral-600'
-                      : 'border-gray-200 hover:border-coral-300'
-                  }`}
-                >
-                  Student
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleInputChange('role', 'teacher')}
-                  className={`p-3 text-sm rounded-lg border-2 transition-colors ${
-                    formData.role === 'teacher'
-                      ? 'border-coral-500 bg-coral-50 text-coral-600'
-                      : 'border-gray-200 hover:border-coral-300'
-                  }`}
-                >
-                  Teacher
-                </button>
-              </div>
-            </div>
-
             {/* Name Fields */}
             <div className="grid grid-cols-2 gap-4">
               <div>

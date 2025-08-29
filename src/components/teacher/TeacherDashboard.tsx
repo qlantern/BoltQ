@@ -56,13 +56,23 @@ const TeacherDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo and Title */}
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-coral-500">TeachBnB</h1>
-              <span className="ml-4 text-gray-600 hidden md:block">Teacher Dashboard</span>
+            <div className="flex items-center w-60">
+              <button 
+                onClick={() => window.location.href = '/'}
+                className="text-2xl font-bold text-coral-500 hover:text-coral-600 transition-colors"
+              >
+                TeachBnB
+              </button>
+            </div>
+
+            {/* Center Title */}
+            <div className="flex-1 text-center">
+              <h1 className="text-xl font-semibold text-gray-900">Teacher Dashboard</h1>
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 w-60 justify-end">
+              <LanguageSelector variant="icon" />
               <button className="relative p-2 text-gray-600 hover:text-coral-500 hover:bg-gray-100 rounded-full">
                 <Bell className="h-5 w-5" />
                 {notifications > 0 && (
