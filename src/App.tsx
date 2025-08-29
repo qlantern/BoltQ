@@ -81,26 +81,7 @@ function AppContent() {
       )}
 
       {currentView === 'become-teacher' && (
-        <ProtectedRoute 
-          requireAuth 
-          onRedirect={handleNavigate}
-          fallback={
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Authentication Required</h2>
-                <p className="text-gray-600 mb-6">Please sign in to apply as a teacher.</p>
-                <button 
-                  onClick={() => handleNavigate('signin')}
-                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
-                >
-                  Sign In
-                </button>
-              </div>
-            </div>
-          }
-        >
-          <BecomeTeacherPage onNavigate={handleNavigate} />
-        </ProtectedRoute>
+        <BecomeTeacherPage onNavigate={handleNavigate} />
       )}
 
       {/* Admin pages */}

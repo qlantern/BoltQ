@@ -1,6 +1,49 @@
 import { Teacher, Review } from '../types';
 
 export const mockTeachers: Teacher[] = [
+  // Add group class examples
+  {
+    id: '5',
+    name: 'Amina Benali',
+    avatar: 'https://images.pexels.com/photos/3184338/pexels-photo-3184338.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+    location: 'Algiers',
+    languages: ['Arabic (Native)', 'English (Fluent)', 'French (Fluent)'],
+    specialties: ['Group Classes', 'Conversation', 'Cultural Exchange'],
+    experience: 5,
+    rating: 4.8,
+    reviewCount: 67,
+    pricePerHour: 800,
+    availability: 'available',
+    bio: 'Specialized in group learning dynamics and cultural exchange. I create engaging group sessions that encourage students to learn from each other.',
+    education: ['MA in Education - University of Algiers', 'BA in English Literature'],
+    certifications: ['TESOL', 'Group Teaching Specialist'],
+    responseTime: 'within 3 hours',
+    lessonsCompleted: 450,
+    isOnline: true,
+    offersOnlineClasses: true,
+    offersOfflineClasses: true
+  },
+  {
+    id: '6',
+    name: 'Youssef Kadi',
+    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop',
+    location: 'Oran',
+    languages: ['Arabic (Native)', 'English (Fluent)', 'French (Intermediate)'],
+    specialties: ['Group Workshops', 'Business English', 'Team Building'],
+    experience: 7,
+    rating: 4.6,
+    reviewCount: 89,
+    pricePerHour: 1200,
+    availability: 'available',
+    bio: 'Expert in group workshops and team-based learning. I help corporate teams and student groups improve their English communication skills together.',
+    education: ['MBA - University of Oran', 'BA in Business Administration'],
+    certifications: ['Business English Specialist', 'Corporate Training Certificate'],
+    responseTime: 'within 2 hours',
+    lessonsCompleted: 680,
+    isOnline: true,
+    offersOnlineClasses: true,
+    offersOfflineClasses: true
+  },
   {
     id: '1',
     name: 'Sarah Johnson',

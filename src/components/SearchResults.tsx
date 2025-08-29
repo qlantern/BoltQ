@@ -184,30 +184,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                   <Filter className="h-4 w-4 mr-2" />
                   Filters
                 </button>
-
-                {/* View Toggle */}
-                <div className="hidden sm:flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-                  <button 
-                    onClick={() => setViewMode('grid')}
-                    className={`shadow-sm rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                      viewMode === 'grid' 
-                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white' 
-                        : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-                    }`}
-                  >
-                    Grid
-                  </button>
-                  <button 
-                    onClick={() => setViewMode('list')}
-                    className={`shadow-sm rounded-md px-3 py-1 text-sm font-medium transition-colors ${
-                      viewMode === 'list' 
-                        ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white' 
-                        : 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-                    }`}
-                  >
-                    List
-                  </button>
-                </div>
               </div>
             </div>
           </div>

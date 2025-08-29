@@ -274,10 +274,9 @@ const BecomeTeacherPage: React.FC<BecomeTeacherPageProps> = ({ onNavigate }) => 
             <button
               onClick={() => handleStepClick(step)}
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
-              step < currentStep ? 'bg-coral-500 text-white' :
-              step === currentStep ? 'bg-coral-500 text-white' :
-              'bg-gray-200 text-gray-600 hover:bg-gray-300'
-            } ${step <= currentStep || (step === currentStep + 1 && isStepValid(currentStep)) ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+              step <= currentStep ? 'bg-coral-500 text-white' :
+              'bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer'
+            }`}
             >
               {step < currentStep ? <Check className="h-4 w-4" /> : step}
             </button>

@@ -49,9 +49,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, onFilter
       experienceLevels: [],
       specialties: [],
       classTypes: [],
-      ratings: []
+      ratings: [],
+      locations: []
     };
     setFilters(clearedFilters);
+    setPriceRange([500, 3000]);
+    setLocationSearch('');
     onFiltersChange?.(clearedFilters);
   };
 

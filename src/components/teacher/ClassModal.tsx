@@ -531,13 +531,15 @@ const ClassModal: React.FC<ClassModalProps> = ({
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Class Images</h3>
                   
                   <div className="space-y-4">
-                    <button
-                      onClick={() => setShowPhotoUpload(true)}
-                      className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-coral-500 transition-colors"
-                    >
-                      <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">Add Class Photo</p>
-                    </button>
+                    {formData.images.length < 4 && (
+                      <button
+                        onClick={() => setShowPhotoUpload(true)}
+                        className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-coral-500 transition-colors"
+                      >
+                        <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-600">Add Class Photo ({formData.images.length}/4)</p>
+                      </button>
+                    )}
 
                     {formData.images.length > 0 && (
                       <div className="grid grid-cols-2 gap-3">
@@ -556,6 +558,12 @@ const ClassModal: React.FC<ClassModalProps> = ({
                             </button>
                           </div>
                         ))}
+                      </div>
+                    )}
+                    
+                    {formData.images.length >= 4 && (
+                      <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <p className="text-sm text-yellow-800">Maximum of 4 images allowed per class</p>
                       </div>
                     )}
                   </div>

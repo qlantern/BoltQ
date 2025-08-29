@@ -391,9 +391,13 @@ const SchedulingSystem: React.FC = () => {
                 <div 
                   key={dayIndex} 
                   className={`p-2 border-r border-gray-100 last:border-r-0 min-h-[60px] relative cursor-pointer transition-colors ${
-                    slot ? 'hover:bg-gray-50' : isAvailable ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
+                    slot ? 'hover:bg-gray-50' : 
+                    selectedSlots.has(slotKey) ? 'bg-coral-100' :
+                    isAvailable ? 'bg-blue-50 hover:bg-blue-100' : 'hover:bg-gray-50'
                   }`}
                   onClick={() => handleSlotClick(day, time, slot)}
+                  onMouseDown={() => handleMouseDown(day, time, slot)}
+                  onMouseEnter={() => handleMouseEnter(day, time, slot)}
                 >
                   {slot ? (
                     <div className={`p-2 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${getStatusColor(slot.status)}`}>
