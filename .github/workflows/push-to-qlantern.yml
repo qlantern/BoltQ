@@ -1,0 +1,27 @@
+name: Push to qlantern/BoltQ
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push-to-external:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push to qlantern/BoltQ
+        env:
+          PAT: ${{ secrets.PAT_BOLT }}
+        run: |
+          git remote add qlantern https://qlantern:${PAT}@github.com/qlantern/BoltQ.git || git remote set-url qlantern https://qlantern:${PAT}@github.com/qlantern/BoltQ.git
+          git push qlantern main --force
