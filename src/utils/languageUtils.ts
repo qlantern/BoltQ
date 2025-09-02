@@ -64,16 +64,26 @@ export class LanguageUtils {
    * Initialize language on app startup
    */
   static initializeLanguage(): void {
-    const savedLang = localStorage.getItem('i18nextLng');
-    const currentLang = this.getCurrentLanguage();
+    try {
+      const savedLang = localStorage.getItem('i18nextLng');
+      const currentLang = this.getCurrentLanguage();
 
-    // Apply the correct direction and lang attribute
-    document.documentElement.dir = currentLang.dir;
-    document.documentElement.lang = currentLang.code;
+      console.log('Initializing language:', { savedLang, currentLang: currentLang.code });
 
-    // If we have a saved language that's different from the current one, switch to it
-    if (savedLang && savedLang !== currentLang.code && SUPPORTED_LANGUAGES.some(lang => lang.code === savedLang)) {
-      this.changeLanguage(savedLang as LanguageCode);
+      // Apply the correct direction and lang attribute
+      document.documentElement.dir = currentLang.dir;
+      document.documentElement.lang = currentLang.code;
+
+      // If we have a saved language that's different from the current one, switch to it
+      if (savedLang && savedLang !== currentLang.code && this.isValidLanguage(savedLang)) {
+        console.log(`Switching to saved language: ${savedLang}`);
+        this.changeLanguage(savedLang as LanguageCode);
+      }
+    } catch (error) {
+      console.error('Failed to initialize language:', error);
+      // Fallback to English if initialization fails
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'en';
     }
   }
 
