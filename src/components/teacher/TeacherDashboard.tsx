@@ -13,7 +13,7 @@ import {
 import LanguageSelector from '../LanguageSelector';
 import ProfileManagement from './ProfileManagement';
 import MessagesSection from './MessagesSection';
-import SchedulingSystem from './SchedulingSystem';
+import { SchedulingSystem } from './SchedulingSystem';
 import ListingManagement from './ListingManagement';
 import DashboardOverview from './DashboardOverview';
 import SettingsSection from './SettingsSection';
