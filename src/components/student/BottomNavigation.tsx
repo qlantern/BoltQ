@@ -30,8 +30,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
   ] as const;
 
   return (
-    <nav className=\"md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40 safe-area-inset-bottom\">
-      <div className=\"flex justify-around items-center h-16\">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 z-40 safe-area-inset-bottom">
+      <div className="flex justify-around items-center h-16">
         {primaryTabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -46,15 +46,15 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({
                   : 'text-gray-600 dark:text-gray-400 hover:text-coral-500 dark:hover:text-coral-400'
               }`}
             >
-              <div className=\"relative\">
-                <Icon className=\"h-5 w-5 mb-1\" />
-                {tab.badge && tab.badge > 0 && (
-                  <span className=\"absolute -top-2 -right-2 bg-coral-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center\">
+              <div className="relative">
+                <Icon className="h-5 w-5 mb-1" />
+                {'badge' in tab && tab.badge && tab.badge > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-coral-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                     {tab.badge > 9 ? '9+' : tab.badge}
                   </span>
                 )}
               </div>
-              <span className=\"text-xs font-medium truncate w-full text-center\">
+              <span className="text-xs font-medium truncate w-full text-center">
                 {tab.label}
               </span>
             </button>

@@ -252,7 +252,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   />
                 </div>
               </>
-            )}}
+            )}
             
             <button 
               onClick={() => {

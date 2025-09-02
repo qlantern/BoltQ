@@ -240,7 +240,6 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
               </div>
             </div>
           </div>
-          </div>
         </div>
       </div>
 
