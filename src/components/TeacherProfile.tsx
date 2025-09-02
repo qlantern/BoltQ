@@ -9,6 +9,7 @@ import MessageCenter from './messaging/MessageCenter';
 
 interface TeacherProfileProps {
   teacher: Teacher;
+import ContextualNavigation from './ContextualNavigation';
   onBack: () => void;
 }
 
@@ -54,11 +55,20 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <button
             onClick={onBack}
-            className="flex items-center text-coral-500 hover:text-coral-600 mb-4"
+            className="flex items-center text-coral-500 hover:text-coral-600 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to search
           </button>
+
+          {/* Contextual Navigation */}
+          <div className="mb-6">
+            <ContextualNavigation 
+              currentView="profile"
+              userRole={user?.role || null}
+              onNavigate={onNavigate}
+            />
+          </div>
 
           <div className="flex flex-col lg:flex-row lg:items-start space-y-6 lg:space-y-0 lg:space-x-8">
             {/* Teacher Image */}

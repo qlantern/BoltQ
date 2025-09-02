@@ -182,7 +182,7 @@ const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onFavorite, isFavori
                 )}
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold text-gray-900 dark:text-white">{teacher.pricePerHour} DZD/hour</div>
+              <div className="text-lg font-bold text-gray-900 dark:text-white">{teacher.pricePerHour} DZD/lesson</div>
             </div>
           </div>
 

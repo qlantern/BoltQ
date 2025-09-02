@@ -216,6 +216,24 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                 </button>
               </div>
             )}
+            
+            {/* Additional Navigation */}
+            <div className="mt-6">
+              <div className="bg-coral-50 dark:bg-coral-900/20 rounded-lg p-4">
+                <h4 className="font-semibold text-coral-900 dark:text-coral-100 mb-2">
+                  New to TeachBnB?
+                </h4>
+                <p className="text-sm text-coral-800 dark:text-coral-200 mb-3">
+                  Learn how our platform connects you with the best English teachers in Algeria.
+                </p>
+                <button
+                  onClick={() => onNavigate('home')}
+                  className="text-sm text-coral-600 dark:text-coral-400 hover:text-coral-700 dark:hover:text-coral-300 font-medium"
+                >
+                  Learn more about TeachBnB →
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

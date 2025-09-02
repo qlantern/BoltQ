@@ -28,7 +28,7 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
 								<div className="flex-1 w-full">
 									<input
 										type="text"
-										placeholder="What do you want to learn? (Business English, IELTS, Conversation...)"
+										placeholder="What do you want to learn? (Business English, IELTS, Conversation...) - Algeria"
 										className="w-full px-6 py-4 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-coral-500"
 									/>
 								</div>
@@ -37,7 +37,7 @@ const Hero: React.FC<HeroProps> = ({ onSearchClick, onBecomeTeacherClick }) => {
 									onClick={onSearchClick}
 								>
 									<Search className="h-5 w-5 mr-2" />
-									Search Teachers
+									Find Teachers in Algeria
 								</button>
 							</div>
 						</div>

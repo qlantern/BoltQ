@@ -13,6 +13,8 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import TeacherDashboard from './components/teacher/TeacherDashboard';
 import StudentDashboard from './components/student/StudentDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import Footer from './components/Footer';
+import SEOLinkStructure from './components/SEOLinkStructure';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 import { adminService } from './services/adminService';
@@ -340,80 +342,24 @@ function AppContent() {
             </div>
           </section>
 
-          {/* Footer */}
-          <footer className="bg-gray-900 text-white py-12">
+          {/* SEO Link Structure Section */}
+          <section className="py-16 bg-white dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                  <h3 className="text-2xl font-bold mb-4">TeachBnB</h3>
-                  <p className="text-gray-400">
-                    Connecting English learners with qualified teachers across Algeria.
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-4">For Students</h4>
-                  <ul className="space-y-2 text-gray-400">
-                    <li><a href="#" className="hover:text-white">Find Teachers</a></li>
-                    <li><a href="#" className="hover:text-white">How it Works</a></li>
-                    <li><a href="#" className="hover:text-white">Pricing</a></li>
-                    <li><a href="#" className="hover:text-white">Reviews</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-4">For Teachers</h4>
-                  <ul className="space-y-2 text-gray-400">
-                    <li>
-                      <button 
-                        onClick={() => setCurrentView('become-teacher')}
-                        className="hover:text-white text-left"
-                      >
-                        Become a Teacher
-                      </button>
-                    </li>
-                    <li><a href="#" className="hover:text-white">Teacher Resources</a></li>
-                    <li>
-                      <button 
-                        onClick={() => setCurrentView('teacher-dashboard')}
-                        className="hover:text-white text-left"
-                      >
-                        Dashboard
-                      </button>
-                    </li>
-                    <li>
-                      <button 
-                        onClick={() => setCurrentView('student-dashboard')}
-                        className="hover:text-white text-left"
-                      >
-                        Student Dashboard
-                      </button>
-                    </li>
-                    <li><a href="#" className="hover:text-white">Community</a></li>
-                    <li><a href="#" className="hover:text-white">Support</a></li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-4">Support</h4>
-                  <ul className="space-y-2 text-gray-400">
-                    <li><a href="#" className="hover:text-white">Help Center</a></li>
-                    <li><a href="#" className="hover:text-white">Contact Us</a></li>
-                    <li>
-                      <button 
-                        onClick={() => setCurrentView('admin-login')}
-                        className="hover:text-white text-left"
-                      >
-                        Admin Login
-                      </button>
-                    </li>
-                    <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                    <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-                  </ul>
-                </div>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                  English Learning in Algeria
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  Discover qualified English teachers, specialized courses, and learning opportunities 
+                  across Algeria's major cities.
+                </p>
               </div>
-              <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; 2024 TeachBnB. All rights reserved.</p>
-              </div>
+              <SEOLinkStructure onNavigate={handleNavigate} />
             </div>
-          </footer>
+          </section>
+
+          {/* Footer */}
+          <Footer onNavigate={handleNavigate} />
         </div>
       )}
     </>
