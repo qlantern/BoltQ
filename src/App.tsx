@@ -11,12 +11,13 @@ import BecomeTeacherPage from './components/BecomeTeacherPage';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import TeacherDashboard from './components/teacher/TeacherDashboard';
+import StudentDashboard from './components/student/StudentDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import { mockTeachers } from './data/mockData';
 import { Teacher } from './types';
 import { adminService } from './services/adminService';
 
-type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard' | 'teacher-dashboard';
+type AppView = 'home' | 'search' | 'profile' | 'signup' | 'signin' | 'become-teacher' | 'admin-login' | 'admin-dashboard' | 'teacher-dashboard' | 'student-dashboard';
 
 function AppContent() {
   const { user, isAuthenticated } = useAuth();
@@ -158,6 +159,44 @@ function AppContent() {
                   className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
                 >
                   Apply to Become a Teacher
+                </button>
+              </div>
+            </div>
+          )}
+        </ProtectedRoute>
+      )}
+
+      {currentView === 'student-dashboard' && (
+        <ProtectedRoute 
+          requireAuth 
+          onRedirect={handleNavigate}
+          fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Student Access Required</h2>
+                <p className="text-gray-600 mb-6">Please sign in to access your student dashboard.</p>
+                <button 
+                  onClick={() => handleNavigate('signin')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          }
+        >
+          {user?.role === 'student' ? (
+            <StudentDashboard />
+          ) : (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Student Account Required</h2>
+                <p className="text-gray-600 mb-6">This dashboard is only available for student accounts.</p>
+                <button 
+                  onClick={() => handleNavigate('signup')}
+                  className="bg-coral-500 text-white px-6 py-3 rounded-lg hover:bg-coral-600"
+                >
+                  Create Student Account
                 </button>
               </div>
             </div>
@@ -338,6 +377,14 @@ function AppContent() {
                         className="hover:text-white text-left"
                       >
                         Dashboard
+                      </button>
+                    </li>
+                    <li>
+                      <button 
+                        onClick={() => setCurrentView('student-dashboard')}
+                        className="hover:text-white text-left"
+                      >
+                        Student Dashboard
                       </button>
                     </li>
                     <li><a href="#" className="hover:text-white">Community</a></li>
