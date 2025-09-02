@@ -114,28 +114,34 @@ const Header = ({ onNavigate }: HeaderProps) => {
               />
               
               {isAuthenticated && (
-                <button 
-                  onClick={() => setIsMessageCenterOpen(true)}
-                  className="relative p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
-                  title={t('common.messages')}
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
-                </button>
-              )}
+                <>
+                  <button 
+                    onClick={() => setIsMessageCenterOpen(true)}
+                    className="relative p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
+                    title={t('common.messages')}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
 
-              <UserMenu onNavigate={onNavigate} />
+                  <UserMenu onNavigate={onNavigate} />
+                  
+                  <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
+                  >
+                    <Menu className="h-6 w-6" />
+                  </button>
+                </>
+              )}
               
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
-              >
-                <Menu className="h-6 w-6" />
-              </button>
+              {!isAuthenticated && (
+                <UserMenu onNavigate={onNavigate} />
+              )}
             </div>
           )}
 
@@ -145,33 +151,39 @@ const Header = ({ onNavigate }: HeaderProps) => {
               <LanguageSelector variant="icon" />
               
               {isAuthenticated && (
-                <button 
-                  onClick={() => setIsMessageCenterOpen(true)}
-                  className="relative p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
-                  title={t('common.messages')}
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
-                </button>
+                <>
+                  <button 
+                    onClick={() => setIsMessageCenterOpen(true)}
+                    className="relative p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
+                    title={t('common.messages')}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
+                  >
+                    {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                  </button>
+                </>
               )}
               
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 text-gray-700 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 dark:text-gray-300 dark:hover:text-coral-400 min-h-touch min-w-touch flex items-center justify-center"
-              >
-                {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-              </button>
+              {!isAuthenticated && (
+                <UserMenu onNavigate={onNavigate} />
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Mobile/Tablet Menu */}
-      {isMenuOpen && (isMobile || isTablet) && (
+      {/* Mobile/Tablet Menu - Only for authenticated users */}
+      {isMenuOpen && (isMobile || isTablet) && isAuthenticated && (
         <div className="border-t border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-800">
           <div className="px-4 py-2 space-y-1">
             <button 
@@ -184,88 +196,63 @@ const Header = ({ onNavigate }: HeaderProps) => {
               {t('common.findTeachers')}
             </button>
             
-            {!isAuthenticated ? (
+            {user?.role === 'teacher' && (
+              <button 
+                onClick={() => {
+                  onNavigate('teacher-dashboard');
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-coral-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg dark:text-gray-300 dark:hover:text-coral-400 min-h-touch"
+              >
+                Teacher Dashboard
+              </button>
+            )}
+            
+            {/* Mobile-specific actions */}
+            {isMobile && (
               <>
                 <button 
-                  onClick={() => {
-                    onNavigate('signup');
-                    setIsMenuOpen(false);
-                  }}
                   className="block w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-coral-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg dark:text-gray-300 dark:hover:text-coral-400 min-h-touch"
+                  title={t('common.notifications')}
                 >
-                  {t('common.signUp')}
+                  <div className="flex items-center">
+                    <Bell className="h-5 w-5 mr-3" />
+                    {t('common.notifications')}
+                  </div>
                 </button>
-                <button 
-                  onClick={() => {
-                    onNavigate('signin');
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-coral-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg dark:text-gray-300 dark:hover:text-coral-400 min-h-touch"
-                >
-                  {t('common.logIn')}
-                </button>
-              </>
-            ) : (
-              <>
-                {user?.role === 'teacher' && (
-                  <button 
+                
+                {user?.role === 'student' && (
+                  <button
                     onClick={() => {
-                      onNavigate('teacher-dashboard');
+                      alert(`You have ${favorites.length} favorite teachers`);
                       setIsMenuOpen(false);
                     }}
                     className="block w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-coral-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg dark:text-gray-300 dark:hover:text-coral-400 min-h-touch"
                   >
-                    Teacher Dashboard
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Heart className="h-5 w-5 mr-3" />
+                        {t('common.favorites')}
+                      </div>
+                      {favorites.length > 0 && (
+                        <span className="bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                          {favorites.length > 9 ? '9+' : favorites.length}
+                        </span>
+                      )}
+                    </div>
                   </button>
                 )}
                 
-                {/* Mobile-specific actions */}
-                {isMobile && (
-                  <>
-                    <button 
-                      className="block w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-coral-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg dark:text-gray-300 dark:hover:text-coral-400 min-h-touch"
-                      title={t('common.notifications')}
-                    >
-                      <div className="flex items-center">
-                        <Bell className="h-5 w-5 mr-3" />
-                        {t('common.notifications')}
-                      </div>
-                    </button>
-                    
-                    {user?.role === 'student' && (
-                      <button
-                        onClick={() => {
-                          alert(`You have ${favorites.length} favorite teachers`);
-                          setIsMenuOpen(false);
-                        }}
-                        className="block w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-coral-500 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg dark:text-gray-300 dark:hover:text-coral-400 min-h-touch"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <Heart className="h-5 w-5 mr-3" />
-                            {t('common.favorites')}
-                          </div>
-                          {favorites.length > 0 && (
-                            <span className="bg-coral-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                              {favorites.length > 9 ? '9+' : favorites.length}
-                            </span>
-                          )}
-                        </div>
-                      </button>
-                    )}
-                    
-                    <div className="px-3 py-3">
-                      <DayNightSwitch
-                        defaultChecked={true}
-                        onToggle={(checked) => {
-                          document.documentElement.classList.toggle('dark', !checked);
-                        }}
-                      />
-                    </div>
-                  </>
-                )}
+                <div className="px-3 py-3">
+                  <DayNightSwitch
+                    defaultChecked={true}
+                    onToggle={(checked) => {
+                      document.documentElement.classList.toggle('dark', !checked);
+                    }}
+                  />
+                </div>
               </>
-            )}
+            )}}
             
             <button 
               onClick={() => {
