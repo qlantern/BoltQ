@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Filter } from 'lucide-react';
 import TeacherCard from './TeacherCard';
-import FilterSidebar from './FilterSidebar';
+import { FilterSidebar } from './FilterSidebar';
 import { Teacher } from '../types';
 
 interface SearchResultsProps {
