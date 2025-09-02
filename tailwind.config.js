@@ -3,6 +3,14 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
+    screens: {
+      'xs': '375px',   // Large mobile
+      'sm': '640px',   // Small tablet
+      'md': '768px',   // Tablet
+      'lg': '1024px',  // Small desktop
+      'xl': '1280px',  // Desktop
+      '2xl': '1536px', // Large desktop
+    },
     extend: {
       colors: {
         coral: {
@@ -53,6 +61,11 @@ export default {
           'Arial',
           'sans-serif'
         ]
+      },
+      spacing: {
+        'touch': '44px', // Minimum touch target
+        'safe-area-inset-top': 'env(safe-area-inset-top)',
+        'safe-area-inset-bottom': 'env(safe-area-inset-bottom)',
       },
       lineHeight: {
         relaxed: '1.5',

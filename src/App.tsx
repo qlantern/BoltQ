@@ -219,6 +219,7 @@ function AppContent() {
           <SearchResults 
             teachers={mockTeachers}
             onTeacherSelect={handleTeacherSelect}
+            onNavigate={handleNavigate}
           />
         </div>
       )}

@@ -2,26 +2,8 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Globe, Check, ChevronDown } from 'lucide-react';
+import { LanguageUtils, SUPPORTED_LANGUAGES, type LanguageCode } from '../../../utils/languageUtils';
 
-// Define supported languages with their metadata
-const languages = [
-  { code: 'en', name: 'English', flag: '🇬🇧', label: 'English (UK)', region: 'GB', dir: 'ltr' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', label: 'French', region: 'FR', dir: 'ltr' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦', label: 'Arabic', region: 'SA', dir: 'rtl' },
-] as const;
-
-// Type definitions
-type LanguageCode = typeof languages[number]['code'];
-type Direction = 'ltr' | 'rtl';
-
-interface Language {
-  code: LanguageCode;
-  name: string;
-  flag: string;
-  label: string;
-  region: string;
-  dir: Direction;
-}
 
 interface LanguageSelectorProps {
   variant?: 'dropdown' | 'icon';
@@ -70,8 +52,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuItemsRef = useRef<Array<HTMLButtonElement | null>>([]);
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
-  const isRTL = currentLanguage.dir === 'rtl';
+  const currentLanguage = LanguageUtils.getCurrentLanguage();
+  const isRTL = LanguageUtils.isRTL();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -106,11 +88,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           break;
         case 'ArrowDown':
           event.preventDefault();
-          setFocusedIndex(prev => (prev < languages.length - 1 ? prev + 1 : 0));
+          setFocusedIndex(prev => (prev < SUPPORTED_LANGUAGES.length - 1 ? prev + 1 : 0));
           break;
         case 'ArrowUp':
           event.preventDefault();
-          setFocusedIndex(prev => (prev > 0 ? prev - 1 : languages.length - 1));
+          setFocusedIndex(prev => (prev > 0 ? prev - 1 : SUPPORTED_LANGUAGES.length - 1));
           break;
         case 'Home':
           event.preventDefault();
@@ -118,19 +100,19 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           break;
         case 'End':
           event.preventDefault();
-          setFocusedIndex(languages.length - 1);
+          setFocusedIndex(SUPPORTED_LANGUAGES.length - 1);
           break;
         case 'Enter':
         case ' ':
           event.preventDefault();
           if (focusedIndex >= 0) {
-            handleLanguageChange(languages[focusedIndex].code);
+            handleLanguageChange(SUPPORTED_LANGUAGES[focusedIndex].code);
           }
           break;
         default:
           // Handle first-letter navigation
           const key = event.key.toLowerCase();
-          const index = languages.findIndex(lang => 
+          const index = SUPPORTED_LANGUAGES.findIndex(lang => 
             lang.name.toLowerCase().startsWith(key)
           );
           if (index !== -1) {
@@ -141,17 +123,16 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     }
   }, [isOpen, focusedIndex]);
 
-  const handleLanguageChange = useCallback((langCode: LanguageCode) => {
-    const newLang = languages.find(lang => lang.code === langCode);
-    if (newLang) {
-      i18n.changeLanguage(langCode);
-      document.documentElement.dir = newLang.dir;
-      document.documentElement.lang = langCode;
+  const handleLanguageChange = useCallback(async (langCode: LanguageCode) => {
+    try {
+      await LanguageUtils.changeLanguage(langCode);
       setIsOpen(false);
       setFocusedIndex(-1);
       buttonRef.current?.focus();
+    } catch (error) {
+      console.error('Failed to change language:', error);
     }
-  }, [i18n]);
+  }, []);
 
   // Focus management for keyboard navigation
   useEffect(() => {
@@ -218,7 +199,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 direction: isRTL ? 'rtl' : 'ltr'
               }}
             >
-              {languages.map((lang, index) => {
+              {SUPPORTED_LANGUAGES.map((lang, index) => {
                 const isSelected = lang.code === currentLanguage.code;
                 const isFocused = index === focusedIndex;
                 const itemClasses = [
@@ -317,7 +298,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
               direction: isRTL ? 'rtl' : 'ltr'
             }}
           >
-            {languages.map((lang, index) => {
+            {SUPPORTED_LANGUAGES.map((lang, index) => {
               const isSelected = lang.code === currentLanguage.code;
               const isFocused = index === focusedIndex;
               const itemClasses = [

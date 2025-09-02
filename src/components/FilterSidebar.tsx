@@ -9,16 +9,11 @@ interface FilterSidebarProps {
 export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange }) => {
   const { t } = useTranslation();
   const [priceRange, setPriceRange] = useState([500, 5000]);
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
   const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
   const [selectedFormat, setSelectedFormat] = useState<string[]>([]);
   const [selectedClassType, setSelectedClassType] = useState<string[]>([]);
   const [locationSearch, setLocationSearch] = useState('');
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-
-  const languages = [
-    'Arabic', 'French', 'English', 'Spanish', 'German', 'Italian', 'Chinese', 'Japanese'
-  ];
 
   const algerianCities = [
     'Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Djelfa', 'Sétif',
@@ -31,14 +26,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange })
 
   const formats = ['Online', 'Offline'];
   const classTypes = ['Individual', 'Group'];
-
-  const handleLanguageChange = (language: string) => {
-    const updated = selectedLanguages.includes(language)
-      ? selectedLanguages.filter(l => l !== language)
-      : [...selectedLanguages, language];
-    setSelectedLanguages(updated);
-    updateFilters({ languages: updated });
-  };
 
   const handleAvailabilityChange = (option: string) => {
     const updated = selectedAvailability.includes(option)
@@ -79,7 +66,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange })
 
   const updateFilters = (newFilters: any) => {
     onFiltersChange({
-      languages: selectedLanguages,
       availability: selectedAvailability,
       format: selectedFormat,
       classType: selectedClassType,
@@ -108,14 +94,32 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange })
         
         <div className="space-y-3">
           <div className="relative">
+            {/* Dual range slider track */}
+            <div className="relative h-2 bg-gray-200 rounded-lg">
+              <div 
+                className="absolute h-2 bg-coral-500 rounded-lg"
+                style={{
+                  left: `${((priceRange[0] - 500) / (10000 - 500)) * 100}%`,
+                  right: `${100 - ((priceRange[1] - 500) / (10000 - 500)) * 100}%`
+                }}
+              />
+            </div>
+            
+            {/* Range inputs */}
             <input
               type="range"
               min="500"
               max="10000"
               step="100"
               value={priceRange[0]}
-              onChange={(e) => handlePriceChange([parseInt(e.target.value), priceRange[1]])}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (value < priceRange[1]) {
+                  handlePriceChange([value, priceRange[1]]);
+                }
+              }}
+              className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer pointer-events-none"
+              style={{ pointerEvents: 'auto' }}
             />
             <input
               type="range"
@@ -123,8 +127,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange })
               max="10000"
               step="100"
               value={priceRange[1]}
-              onChange={(e) => handlePriceChange([priceRange[0], parseInt(e.target.value)])}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb absolute top-0"
+              onChange={(e) => {
+                const value = parseInt(e.target.value);
+                if (value > priceRange[0]) {
+                  handlePriceChange([priceRange[0], value]);
+                }
+              }}
+              className="absolute w-full h-2 bg-transparent appearance-none cursor-pointer pointer-events-none"
+              style={{ pointerEvents: 'auto' }}
             />
           </div>
           
@@ -133,33 +143,48 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange })
               <input
                 type="number"
                 value={priceRange[0]}
-                onChange={(e) => handlePriceChange([parseInt(e.target.value) || 500, priceRange[1]])}
-                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 500;
+                  if (value >= 500 && value < priceRange[1]) {
+                    handlePriceChange([value, priceRange[1]]);
+                  }
+                }}
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-coral-500 focus:border-coral-500"
                 min="500"
-                max="10000"
+                max="9999"
+                placeholder="Min"
               />
-              <span className="text-xs text-gray-500">DZD</span>
+              <span className="text-xs text-gray-500 font-medium">DZD</span>
             </div>
-            <span className="text-gray-400">-</span>
+            <span className="text-gray-400 mx-2">—</span>
             <div className="flex items-center gap-2">
               <input
                 type="number"
                 value={priceRange[1]}
-                onChange={(e) => handlePriceChange([priceRange[0], parseInt(e.target.value) || 10000])}
-                className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                min="500"
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 10000;
+                  if (value <= 10000 && value > priceRange[0]) {
+                    handlePriceChange([priceRange[0], value]);
+                  }
+                }}
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-coral-500 focus:border-coral-500"
+                min="501"
                 max="10000"
+                placeholder="Max"
               />
-              <span className="text-xs text-gray-500">DZD</span>
+              <span className="text-xs text-gray-500 font-medium">DZD</span>
             </div>
           </div>
           
-          <div className="bg-blue-50 px-3 py-2 rounded-lg">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Range:</span>
-              <span className="font-medium text-blue-600">
+          <div className="bg-coral-50 border border-coral-200 px-4 py-3 rounded-lg">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-700 font-medium">Selected Range:</span>
+              <span className="font-semibold text-coral-600">
                 {priceRange[0].toLocaleString()} - {priceRange[1].toLocaleString()} DZD
               </span>
+            </div>
+            <div className="text-xs text-gray-600 mt-1">
+              Per hour • {((priceRange[1] - priceRange[0]) / 100).toFixed(0)} price levels
             </div>
           </div>
         </div>
@@ -195,26 +220,6 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFiltersChange })
                 className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <span className="text-sm text-gray-700">{city}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Languages Filter */}
-      <div className="mb-6">
-        <label className="text-sm font-medium text-gray-700 mb-3 block">
-          {t('languages')}
-        </label>
-        <div className="space-y-2 max-h-40 overflow-y-auto">
-          {languages.map((language) => (
-            <label key={language} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
-              <input
-                type="checkbox"
-                checked={selectedLanguages.includes(language)}
-                onChange={() => handleLanguageChange(language)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">{language}</span>
             </label>
           ))}
         </div>

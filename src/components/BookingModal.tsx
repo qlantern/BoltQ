@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { X, Calendar, Clock, DollarSign, User, CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Teacher } from '../types';
 import BookingConfirmation from './BookingConfirmation';
+import useBreakpoint from '../hooks/useBreakpoint';
 
 interface BookingModalProps {
   teacher: Teacher;
@@ -22,6 +23,7 @@ interface BookingData {
 const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, onBackToHome }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { isMobile } = useBreakpoint();
   const [bookingData, setBookingData] = useState<BookingData>({
     classType: '',
     date: '',
@@ -134,11 +136,15 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
   const renderStep1 = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Choose Class Type</h3>
+        <h3 className={`font-semibold text-gray-900 mb-2 ${
+          isMobile ? 'text-lg' : 'text-xl'
+        }`}>Choose Class Type</h3>
         <p className="text-gray-600">How would you like to learn with {teacher.name}?</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`gap-4 ${
+        isMobile ? 'space-y-4' : 'grid grid-cols-1 md:grid-cols-2'
+      }`}>
         {teacher.offersOnlineClasses && (
           <button
             onClick={() => setBookingData(prev => ({ ...prev, classType: 'online' }))}
@@ -189,13 +195,17 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
   const renderStep2 = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Select Date & Time</h3>
-        <p className="text-gray-600">Choose when you'd like to have your lesson</p>
+        <h3 className={`font-semibold text-gray-900 dark:text-white mb-2 ${
+          isMobile ? 'text-lg' : 'text-xl'
+        }`}>Select Date & Time</h3>
+        <p className="text-gray-600 dark:text-gray-300">Choose when you'd like to have your lesson</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className={`gap-6 ${
+        isMobile ? 'space-y-6' : 'grid grid-cols-1 md:grid-cols-2'
+      }`}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Calendar className="h-4 w-4 inline mr-1" />
             Select Date
           </label>
@@ -204,19 +214,23 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
             value={bookingData.date}
             onChange={(e) => setBookingData(prev => ({ ...prev, date: e.target.value }))}
             min={new Date().toISOString().split('T')[0]}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+            className={`w-full px-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+              isMobile ? 'py-4 text-base' : 'py-2'
+            }`}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Clock className="h-4 w-4 inline mr-1" />
             Select Time
           </label>
           <select
             value={bookingData.time}
             onChange={(e) => setBookingData(prev => ({ ...prev, time: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+            className={`w-full px-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+              isMobile ? 'py-4 text-base' : 'py-2'
+            }`}
           >
             <option value="">Choose time</option>
             {timeSlots.map(time => (
@@ -226,8 +240,8 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
         </div>
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-800">
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <p className="text-sm text-blue-800 dark:text-blue-200">
           <strong>Availability:</strong> This teacher typically has 70% of time slots available. 
           You'll receive confirmation within 24 hours.
         </p>
@@ -238,40 +252,48 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
   const renderStep3 = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">Lesson Details</h3>
-        <p className="text-gray-600">Customize your learning experience</p>
+        <h3 className={`font-semibold text-gray-900 dark:text-white mb-2 ${
+          isMobile ? 'text-lg' : 'text-xl'
+        }`}>Lesson Details</h3>
+        <p className="text-gray-600 dark:text-gray-300">Customize your learning experience</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           Lesson Duration
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className={`gap-3 ${
+          isMobile ? 'space-y-3' : 'grid grid-cols-3'
+        }`}>
           {[1, 1.5, 2].map(duration => (
             <button
               key={duration}
               onClick={() => setBookingData(prev => ({ ...prev, duration }))}
-              className={`p-3 rounded-lg border-2 transition-all duration-200 ${
+              className={`rounded-lg border-2 transition-all duration-200 text-center ${
+                isMobile ? 'w-full p-4 min-h-touch' : 'p-3'
+              } ${
                 bookingData.duration === duration
-                  ? 'border-coral-500 bg-coral-50 text-coral-600'
-                  : 'border-gray-200 hover:border-coral-300'
+                  ? 'border-coral-500 bg-coral-50 dark:bg-coral-900/20 text-coral-600 dark:text-coral-400'
+                  : 'border-gray-200 dark:border-gray-600 hover:border-coral-300 bg-white dark:bg-gray-800'
               }`}
             >
-              <div className="font-semibold">{duration === 1 ? '1 hour' : `${duration} hours`}</div>
-              <div className="text-sm text-gray-600">{teacher.pricePerHour * duration} DZD</div>
+              <div className="font-semibold text-gray-900 dark:text-white">{duration === 1 ? '1 hour' : `${duration} hours`}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{teacher.pricePerHour * duration} DZD</div>
             </button>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           Focus Area *
         </label>
         <select
           value={bookingData.focusArea}
           onChange={(e) => setBookingData(prev => ({ ...prev, focusArea: e.target.value }))}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+          className={`w-full px-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+            isMobile ? 'py-4 text-base' : 'py-2'
+          }`}
         >
           <option value="">Select focus area</option>
           {focusAreas.map(area => (
@@ -281,14 +303,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
           Special Requests (Optional)
         </label>
         <textarea
           value={bookingData.specialRequests}
           onChange={(e) => setBookingData(prev => ({ ...prev, specialRequests: e.target.value }))}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500"
+          rows={isMobile ? 4 : 3}
+          className={`w-full px-3 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white ${
+            isMobile ? 'py-4 text-base' : 'py-2'
+          }`}
           placeholder="Any specific topics you'd like to focus on or special requirements..."
         />
       </div>
@@ -351,6 +375,16 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
     </div>
   );
 
+  const getStepValidity = () => {
+    switch (currentStep) {
+      case 1: return isStep1Valid;
+      case 2: return isStep2Valid;
+      case 3: return isStep3Valid;
+      case 4: return true;
+      default: return false;
+    }
+  };
+
   if (!isOpen) return null;
 
   if (showConfirmation) {
@@ -372,75 +406,148 @@ const BookingModal: React.FC<BookingModalProps> = ({ teacher, isOpen, onClose, o
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Book a Lesson</h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-0">
+      <div className={`bg-white dark:bg-gray-900 transform transition-all duration-300 ${
+        isMobile 
+          ? 'w-full h-full overflow-y-auto' 
+          : 'rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto m-4'
+      }`}>
+        {/* Header */}
+        <div className={`flex items-center justify-between border-b border-gray-200 dark:border-gray-700 ${
+          isMobile ? 'p-4 sticky top-0 bg-white dark:bg-gray-900 z-10' : 'p-6'
+        }`}>
+          <div className="flex items-center">
+            {isMobile && currentStep > 1 && (
+              <button
+                onClick={handlePrevious}
+                className="mr-3 p-2 text-gray-600 hover:text-coral-500 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg min-h-touch min-w-touch flex items-center justify-center"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+            )}
+            <div>
+              <h2 className={`font-bold text-gray-900 dark:text-white ${
+                isMobile ? 'text-lg' : 'text-2xl'
+              }`}>
+                Book a Lesson{!isMobile && ` with ${teacher.name}`}
+              </h2>
+              {isMobile && (
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  {teacher.name}
+                </p>
+              )}
+            </div>
           </div>
+          <button
+            onClick={onClose}
+            className={`text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors ${
+              isMobile ? 'p-3 min-h-touch min-w-touch' : 'p-2'
+            } flex items-center justify-center`}
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
 
-          {/* Progress Bar */}
-          {renderProgressBar()}
+        {/* Content */}
+        <div className={isMobile ? 'p-4 pb-20' : 'p-6'}>
+          {/* Progress Bar - Hidden on mobile, shown as text instead */}
+          {!isMobile && renderProgressBar()}
+          
+          {isMobile && (
+            <div className="mb-6">
+              <div className="text-center">
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  Step {currentStep} of 4
+                </span>
+              </div>
+              <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-coral-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${(currentStep / 4) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Step Content */}
-          <div className="mb-8">
+          <div className={isMobile ? 'mb-8' : 'mb-8'}>
             {currentStep === 1 && renderStep1()}
             {currentStep === 2 && renderStep2()}
             {currentStep === 3 && renderStep3()}
             {currentStep === 4 && renderStep4()}
           </div>
+        </div>
 
-          {/* Navigation Buttons */}
-          <div className="flex justify-between">
-            <button
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
-              className={`flex items-center px-6 py-2 rounded-lg font-medium ${
-                currentStep === 1
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
-            </button>
-
-            {currentStep < 4 ? (
+        {/* Navigation Buttons - Fixed at bottom on mobile */}
+        <div className={`border-t border-gray-200 dark:border-gray-700 ${
+          isMobile 
+            ? 'fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 p-4 space-y-3' 
+            : 'p-6 flex justify-between'
+        }`}>
+          {isMobile ? (
+            <>
+              {currentStep < 4 && (
+                <button
+                  onClick={handleNext}
+                  disabled={!getStepValidity()}
+                  className={`w-full py-4 px-6 rounded-lg font-semibold transition-colors min-h-touch ${
+                    getStepValidity()
+                      ? 'bg-coral-500 hover:bg-coral-600 text-white'
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  Continue
+                </button>
+              )}
+              {currentStep === 4 && (
+                <button
+                  onClick={handleBookingSubmit}
+                  className="w-full bg-coral-500 hover:bg-coral-600 text-white py-4 px-6 rounded-lg font-semibold transition-colors min-h-touch flex items-center justify-center"
+                >
+                  <CheckCircle className="h-5 w-5 mr-2" />
+                  Send Booking Request
+                </button>
+              )}
+            </>
+          ) : (
+            <>
               <button
-                onClick={handleNext}
-                disabled={
-                  (currentStep === 1 && !isStep1Valid) ||
-                  (currentStep === 2 && !isStep2Valid) ||
-                  (currentStep === 3 && !isStep3Valid)
-                }
+                onClick={handlePrevious}
+                disabled={currentStep === 1}
                 className={`flex items-center px-6 py-2 rounded-lg font-medium ${
-                  ((currentStep === 1 && isStep1Valid) ||
-                   (currentStep === 2 && isStep2Valid) ||
-                   (currentStep === 3 && isStep3Valid))
-                    ? 'bg-coral-500 text-white hover:bg-coral-600'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  currentStep === 1
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                 }`}
               >
-                Next
-                <ChevronRight className="h-4 w-4 ml-1" />
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
               </button>
-            ) : (
-              <button
-                onClick={handleBookingSubmit}
-                className="bg-coral-500 text-white px-8 py-2 rounded-lg font-medium hover:bg-coral-600 flex items-center"
-              >
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Send Booking Request
-              </button>
-            )}
-          </div>
+
+              {currentStep < 4 ? (
+                <button
+                  onClick={handleNext}
+                  disabled={!getStepValidity()}
+                  className={`flex items-center px-6 py-2 rounded-lg font-medium ${
+                    getStepValidity()
+                      ? 'bg-coral-500 text-white hover:bg-coral-600'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </button>
+              ) : (
+                <button
+                  onClick={handleBookingSubmit}
+                  className="bg-coral-500 text-white px-8 py-2 rounded-lg font-medium hover:bg-coral-600 flex items-center"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Send Booking Request
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>

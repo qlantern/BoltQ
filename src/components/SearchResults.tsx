@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
-import { Filter } from 'lucide-react';
+import { Filter, Grid, List, X } from 'lucide-react';
 import TeacherCard from './TeacherCard';
 import { FilterSidebar } from './FilterSidebar';
+import MarketplaceFooter from './MarketplaceFooter';
 import { Teacher } from '../types';
+import useBreakpoint from '../hooks/useBreakpoint';
+import ResponsiveGrid from './ResponsiveGrid';
+import TouchButton from './TouchButton';
 
 interface SearchResultsProps {
   teachers: Teacher[];
   onTeacherSelect: (teacher: Teacher) => void;
+  onNavigate?: (view: string) => void;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect, onNavigate }) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState('recommended');
   const [favoritedTeachers, setFavoritedTeachers] = useState<Set<string>>(new Set());
   const [filteredTeachers, setFilteredTeachers] = useState(teachers);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [displayedCount, setDisplayedCount] = useState(12);
+  const { isMobile, isTablet } = useBreakpoint();
 
   React.useEffect(() => {
     setFilteredTeachers(teachers);
@@ -143,31 +149,92 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex">
-        {/* Filter Sidebar */}
-        <FilterSidebar 
-          isOpen={isFilterOpen} 
-          onClose={() => setIsFilterOpen(false)} 
-          onFiltersChange={handleFiltersChange}
-        />
+        {/* Filter Sidebar - Desktop */}
+        <div className="hidden lg:block w-80 flex-shrink-0">
+          <div className="sticky top-0">
+            <FilterSidebar 
+              onFiltersChange={handleFiltersChange}
+            />
+          </div>
+        </div>
+
+        {/* Mobile Filter Overlay */}
+        {isFilterOpen && (
+          <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setIsFilterOpen(false)}>
+            <div className="absolute left-0 top-0 h-full w-80 bg-white dark:bg-gray-900 overflow-y-auto shadow-xl" onClick={(e) => e.stopPropagation()}>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h3>
+                  <button 
+                    onClick={() => setIsFilterOpen(false)}
+                    className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg min-h-touch min-w-touch flex items-center justify-center"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+                <FilterSidebar 
+                  onFiltersChange={handleFiltersChange}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="flex-1 lg:ml-0">
           {/* Header */}
           <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">English Teachers</h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-1">
+            <div className={`flex items-center justify-between ${
+              isMobile ? 'flex-col space-y-3' : 'flex-row'
+            }`}>
+              <div className={isMobile ? 'text-center' : ''}>
+                <h1 className={`font-semibold text-gray-900 dark:text-white ${
+                  isMobile ? 'text-xl' : 'text-2xl'
+                }`}>English Teachers</h1>
+                <p className="text-gray-600 dark:text-gray-300 mt-1 text-sm">
                   {filteredTeachers.length} of {teachers.length} teachers available
                 </p>
               </div>
 
-              <div className="flex items-center space-x-4">
+              <div className={`flex items-center space-x-3 ${
+                isMobile ? 'w-full justify-between' : ''
+              }`}>
+                {/* Mobile Filter Button */}
+                <TouchButton
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsFilterOpen(true)}
+                  className={`lg:hidden ${isMobile ? 'flex-1' : ''}`}
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filters
+                </TouchButton>
+
+                {/* View Mode Toggle - Hidden on mobile */}
+                {!isMobile && (
+                  <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg">
+                    <button
+                      onClick={() => setViewMode('grid')}
+                      className={`p-2 ${viewMode === 'grid' ? 'bg-coral-500 text-white' : 'text-gray-600 dark:text-gray-400'}`}
+                    >
+                      <Grid className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`p-2 ${viewMode === 'list' ? 'bg-coral-500 text-white' : 'text-gray-600 dark:text-gray-400'}`}
+                    >
+                      <List className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
                 {/* Sort Dropdown */}
                 <select
                   value={sortBy}
                   onChange={(e) => handleSortChange(e.target.value)}
-                  className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className={`border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    isMobile ? 'flex-1' : ''
+                  }`}
                 >
                   {sortOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -175,25 +242,21 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                     </option>
                   ))}
                 </select>
-
-                {/* Filter Button (Mobile) */}
-                <button
-                  onClick={() => setIsFilterOpen(true)}
-                  className="lg:hidden bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Filters
-                </button>
               </div>
             </div>
           </div>
 
           {/* Results Grid */}
           <div className="px-4 sm:px-6 lg:px-8 py-8">
-            <div className={viewMode === 'grid' 
-              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" 
-              : "space-y-4"
-            }>
+            <ResponsiveGrid
+              cols={{
+                mobile: 1,
+                tablet: 2,
+                desktop: 3,
+                largeDesktop: 4
+              }}
+              gap={isMobile ? "gap-4" : "gap-6"}
+            >
               {filteredTeachers.slice(0, displayedCount).map(teacher => (
                 <div key={teacher.id} onClick={() => onTeacherSelect(teacher)}>
                   <TeacherCard
@@ -203,17 +266,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                   />
                 </div>
               ))}
-            </div>
+            </ResponsiveGrid>
 
             {/* Load More */}
             {displayedCount < filteredTeachers.length && (
               <div className="text-center mt-12">
-                <button 
+                <TouchButton
                   onClick={loadMoreTeachers}
-                  className="bg-coral-500 text-white px-8 py-3 rounded-lg hover:bg-coral-600 font-semibold"
+                  size="lg"
+                  className="px-8"
                 >
                   Load More Teachers ({filteredTeachers.length - displayedCount} remaining)
-                </button>
+                </TouchButton>
               </div>
             )}
             
@@ -226,17 +290,22 @@ const SearchResults: React.FC<SearchResultsProps> = ({ teachers, onTeacherSelect
                 <p className="text-sm text-coral-800 dark:text-coral-200 mb-3">
                   Learn how our platform connects you with the best English teachers in Algeria.
                 </p>
-                <button
-                  onClick={() => onNavigate('home')}
-                  className="text-sm text-coral-600 dark:text-coral-400 hover:text-coral-700 dark:hover:text-coral-300 font-medium"
+                <TouchButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onNavigate?.('home')}
+                  className="text-coral-600 dark:text-coral-400 hover:text-coral-700 dark:hover:text-coral-300 p-0"
                 >
                   Learn more about TeachBnB →
-                </button>
+                </TouchButton>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Marketplace Footer */}
+      {onNavigate && <MarketplaceFooter onNavigate={onNavigate} />}
     </div>
   );
 };

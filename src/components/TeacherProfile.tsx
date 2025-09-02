@@ -6,10 +6,10 @@ import BookingModal from './BookingModal';
 import { useAuth } from '../contexts/AuthContext';
 import { useMessaging } from '../hooks/useMessaging';
 import MessageCenter from './messaging/MessageCenter';
+import ContextualNavigation from './ContextualNavigation';
 
 interface TeacherProfileProps {
   teacher: Teacher;
-import ContextualNavigation from './ContextualNavigation';
   onBack: () => void;
 }
 
@@ -48,6 +48,24 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
     onBack();
   };
 
+  const handleNavigate = (view: string) => {
+    switch (view) {
+      case 'home':
+        // Navigate to home page
+        window.location.href = '/';
+        break;
+      case 'search':
+        onBack();
+        break;
+      case 'student-dashboard':
+        // Navigate to student dashboard
+        window.location.href = '/student-dashboard';
+        break;
+      default:
+        console.log(`Navigation to ${view} not implemented`);
+    }
+  };
+
   return (
     <div className="bg-white min-h-screen">
       {/* Header */}
@@ -66,7 +84,7 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher, onBack }) => {
             <ContextualNavigation 
               currentView="profile"
               userRole={user?.role || null}
-              onNavigate={onNavigate}
+              onNavigate={handleNavigate}
             />
           </div>
 

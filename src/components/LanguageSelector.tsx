@@ -1,12 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe } from 'lucide-react';
-
-const languages = [
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'ar', name: 'العربية', flag: '🇸🇦' },
-];
+import { LanguageUtils, SUPPORTED_LANGUAGES, type LanguageCode } from '../utils/languageUtils';
 
 interface LanguageSelectorProps {
   variant?: 'dropdown' | 'icon';
@@ -16,13 +11,15 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'dropdown
   const { i18n } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const currentLanguage = LanguageUtils.getCurrentLanguage();
 
-  const handleLanguageChange = (langCode: string) => {
-    i18n.changeLanguage(langCode);
-    document.documentElement.dir = langCode === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = langCode;
-    setIsOpen(false);
+  const handleLanguageChange = async (langCode: LanguageCode) => {
+    try {
+      await LanguageUtils.changeLanguage(langCode);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    }
   };
 
   if (variant === 'icon') {
@@ -38,7 +35,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'dropdown
         
         {isOpen && (
           <div className="absolute top-full right-0 mt-1 py-1 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-            {languages.map(lang => (
+            {SUPPORTED_LANGUAGES.map(lang => (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
@@ -66,7 +63,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'dropdown
 
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 py-1 w-40 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-          {languages.map(lang => (
+          {SUPPORTED_LANGUAGES.map(lang => (
             <button
               key={lang.code}
               onClick={() => handleLanguageChange(lang.code)}
